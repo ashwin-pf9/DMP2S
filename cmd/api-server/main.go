@@ -13,7 +13,7 @@ func main() {
 
 	// Initialize database and run migrations
 	fmt.Println("Running database migrations...")
-	db.InitDatabase() // Running auto migrations
+	db.InitDatabase() // Running auto migrations - .env LOADED
 
 	// Call the server setup function
 	err := rest.StartServer()
