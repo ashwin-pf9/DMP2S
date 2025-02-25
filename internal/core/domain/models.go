@@ -28,7 +28,7 @@ type Pipeline struct {
 	ID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Name   string    `gorm:"not null" json:"name"`
 	UserID uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
-	Stages []Stage   `json:"stages"` // Relationship
+	// Stages []Stage   `json:"stages"` // Relationship
 }
 
 // type Stage struct {

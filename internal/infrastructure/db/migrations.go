@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
+var DB *gorm.DB // Global DB instance
 
 // InitDatabase initializes the database connection
 func InitDatabase() {
@@ -35,6 +35,7 @@ func InitDatabase() {
 		log.Fatal("Failed to connect to database:", err)
 	}
 
+	// making database instance Global
 	DB = db
 
 	// Auto-migrate models

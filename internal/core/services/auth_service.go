@@ -8,20 +8,6 @@ import (
 	"github.com/nedpals/supabase-go"
 )
 
-// RegisterUser handles user registration
-// func RegisterUser(email string, password string) (*supabase.User, error) {
-// 	supabaseClient := supabaseclient.InitSupabaseClient()
-// 	user, err := supabaseClient.Auth.SignUp(context.Background(), supabase.UserCredentials{
-// 		Email:    email,
-// 		Password: password,
-// 	})
-// 	if err != nil {
-// 		log.Printf("Supabase registration error: %v", err)
-// 		return nil, errors.New("registration failed: " + err.Error())
-// 	}
-// 	return user, nil
-// }
-
 func RegisterUser(email string, password string) (*supabase.User, error) {
 	supabaseClient := supabaseclient.InitSupabaseClient()
 
@@ -33,6 +19,7 @@ func RegisterUser(email string, password string) (*supabase.User, error) {
 	if err != nil {
 		return nil, errors.New("registration failed: " + err.Error())
 	}
+
 	return user, nil
 }
 
