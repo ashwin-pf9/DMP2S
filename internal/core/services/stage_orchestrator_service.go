@@ -26,7 +26,7 @@ func (b *StageOrchestratorService) GetStageID() uuid.UUID {
 // Execute runs the build stage logic
 func (b *StageOrchestratorService) ExecuteStage(ctx context.Context, input interface{}) (interface{}, error) {
 	// Simulated execution logic
-	b.stage.Execute(ctx, "some object for single stage execution")
+	b.stage.Execute(ctx, input)
 	return "Build completed", nil
 }
 

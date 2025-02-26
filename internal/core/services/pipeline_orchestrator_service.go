@@ -76,11 +76,11 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 		return nil, errors.New("failed to start pipeline execution")
 	}
 
-	log.Printf("Pipeline Execution started: %s", executionID)
+	log.Printf("Execution of Pipeline started: %s", executionID)
 
 	// Fetch all stages from the database
 	var domainStages []domain.Stage
-	if err := db.DB.Where("pipeline_id = ?", pipelineID).Order("\"order\" ASC").Find(&domainStages).Error; err != nil {
+	if err := db.DB.Where("pipeline_id = ?", pipelineID).Find(&domainStages).Error; err != nil {
 		return "", errors.New("no stages found")
 	}
 
@@ -97,7 +97,7 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 
 	// Mark execution as complete
 	execution.Status = string(domain.Success)
-	execution.EndedAt = &startTime
+	execution.EndedAt = time.Now()
 	db.DB.Save(&execution)
 
 	log.Printf("Pipeline Execution completed: %s", executionID)

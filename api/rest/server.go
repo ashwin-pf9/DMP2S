@@ -32,8 +32,13 @@ func StartServer() error {
 		To make user first need to login and create pipeline, then from that pipeline(card on UI) option for creating state will be provided
 	*/
 
-	// router.HandleFunc("pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
+	router.HandleFunc("/pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
 	router.HandleFunc("/pipelines/{pipeline_id}/stages/add", handlers.AddStageHandler).Methods("POST")
+
+	/*
+		Now that stages are added to the pipeline : user can call on these endpoints for further operation
+	*/
+	router.HandleFunc("/pipelines/{pipeline_id}/execute", handlers.ExecutePipelineHandler).Methods("POST")
 
 	// Start the server
 	port := ":8080"

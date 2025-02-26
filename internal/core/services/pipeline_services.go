@@ -33,3 +33,9 @@ func GetUsersPipelines(userID string) []domain.Pipeline {
 	db.DB.Where("user_id = ?", userID).Find(&pipelines)
 	return pipelines
 }
+
+func GetPipelineStages(pipelineID uuid.UUID) []domain.Stage {
+	var stages []domain.Stage
+	db.DB.Where("pipeline_id = ?", pipelineID).Find(&stages)
+	return stages
+}

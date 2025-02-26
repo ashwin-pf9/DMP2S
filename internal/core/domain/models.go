@@ -47,12 +47,12 @@ type Stage struct {
 
 // PipelineExecution tracks a pipeline run
 type PipelineExecution struct {
-	ID         uuid.UUID  `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	PipelineID uuid.UUID  `gorm:"type:uuid;not null" json:"pipeline_id"`
-	Pipeline   Pipeline   `gorm:"foreignKey:PipelineID" json:"-"`
-	Status     string     `gorm:"type:varchar(50);not null;default:'pending'" json:"status"`
-	StartedAt  time.Time  `gorm:"default:now()" json:"started_at"`
-	EndedAt    *time.Time `json:"ended_at,omitempty"`
+	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	PipelineID uuid.UUID `gorm:"type:uuid;not null" json:"pipeline_id"`
+	Pipeline   Pipeline  `gorm:"foreignKey:PipelineID" json:"-"`
+	Status     string    `gorm:"type:varchar(50);not null;default:'pending'" json:"status"`
+	StartedAt  time.Time `gorm:"default:now()" json:"started_at"`
+	EndedAt    time.Time `json:"ended_at,omitempty"`
 }
 
 // StageExecution tracks the execution of a stage

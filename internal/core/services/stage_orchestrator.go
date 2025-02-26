@@ -1,7 +1,9 @@
 package services
 
 import (
+	"DMP2S/internal/core/domain"
 	"context"
+	"log"
 
 	"github.com/google/uuid"
 )
@@ -22,6 +24,9 @@ func (s *StageOrchestratorImpl) GetID() uuid.UUID {
 
 func (s *StageOrchestratorImpl) Execute(ctx context.Context, input interface{}) (interface{}, error) {
 	//code for executing a stage
+	stage := input.(domain.Stage)
+	log.Printf("execution of stage \"%s\" started", stage.Name)
+	log.Printf("execution of stage \"%s\" ended", stage.Name)
 	return "", nil //TEMPORARY
 }
 

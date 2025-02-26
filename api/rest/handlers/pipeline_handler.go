@@ -65,8 +65,8 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	key := os.Getenv("ANON_KEY") //anon_key because it is a client side request
 
 	// Validate token with Supabase
-	client := supabase.CreateClient(url, key) // Supabase client
-	user, err := client.Auth.User(context.TODO(), token)
+	client := supabase.CreateClient(url, key)            // Supabase client
+	user, err := client.Auth.User(context.TODO(), token) //using context.TODO() as there is no context available
 
 	if err != nil {
 		http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
@@ -95,6 +95,36 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	// Send response
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(pipeline)
+}
+
+func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
+		return
+	}
+
+	token := strings.TrimPrefix(authHeader, "Bearer ")
+
+	url := os.Getenv("SUPABASE_URL")
+	key := os.Getenv("ANON_KEY")
+
+	client := supabase.CreateClient(url, key)
+
+	_, err := client.Auth.User(context.TODO(), token)
+	if err != nil {
+		http.Error(w, "Unauthorized: Expired token", http.StatusUnauthorized)
+	}
+
+	var req struct {
+		pipelineID uuid.UUID
+	}
+	json.NewDecoder(r.Body).Decode(&req)
+	//Reading request body
+	stages := services.GetPipelineStages(req.pipelineID)
+
+	//Now i want to write this stages array to the response socket - for that i need to conver to json type
+	json.NewEncoder(w).Encode(stages)
 }
 
 // -------------------------------------------------------------

@@ -23,7 +23,7 @@ func (imp *PipelineOrchestratorImpl) AddStage(stage domain.Stage) error {
 	}
 	//appending Stage object to the in memory list of stages
 	//p.pipeline.Stages = append(p.pipeline.Stages, stage)
-
+	log.Printf("stage \"%s\"added successfully\n", stage.Name)
 	//Have to figure out how to make this persistent by making database insert query
 
 	return nil
@@ -32,24 +32,30 @@ func (imp *PipelineOrchestratorImpl) AddStage(stage domain.Stage) error {
 func (imp *PipelineOrchestratorImpl) Execute(ctx context.Context, input interface{}) (interface{}, error) {
 
 	// Type assertion to convert interface{}
-	stageList, ok := input.([]StageOrchestratorService)
+	// Type assertion for domain.Stage slice
+	stageList, ok := input.([]domain.Stage)
 	if !ok {
-		return nil, errors.New("failed to assert stages to []domain.Stage")
+		return nil, errors.New("failed to assert input to []domain.Stage")
 	}
 
-	//EXECUTING EACH STAGE
+	// Iterate through each domain.Stage and wrap it into StageOrchestratorService
 	for _, stage := range stageList {
-		log.Printf("▶️ Executing stage: %s", stage.GetStageID())
+		// Create StageOrchestratorService for each stage
+		stageImpl := NewStageOrchestratorImpl()                 // Actual implementation
+		stageService := NewStageOrchestratorService(&stageImpl) // Service layer
 
-		// Execute stage logic
-		result, err := stage.ExecuteStage(ctx, nil)
+		// Call methods on the service layer
+		log.Printf("Executing stage: %s", stage.Name)
+
+		// Execute stage
+		result, err := stageService.ExecuteStage(ctx, stage)
 		if err != nil {
-			log.Printf("Stage %s failed: %v", stage.GetStageID(), err)
-			stage.HandleError(ctx, err)
+			log.Printf("Stage %s failed: %v", stage.Name, err)
+			stageService.HandleError(ctx, err)
 			return nil, err
 		}
 
-		log.Printf("Stage %s succeeded: %v", stage.GetStageID(), result)
+		log.Printf("Stage %s succeeded: %v\n", stage.Name, result)
 	}
 
 	return "an object", nil
