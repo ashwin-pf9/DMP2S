@@ -5,6 +5,9 @@ import (
 	"DMP2S/internal/core/services"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -24,12 +27,11 @@ import (
 // user id
 // user name?
 // ...
-func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be called on clients request
-	// Extract Token from Authorization Header
+func authenticateRequest(w http.ResponseWriter, r *http.Request) (*supabase.User, error) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
 		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
-		return
+		return nil, errors.New("missing authorization token")
 	}
 
 	token := strings.TrimPrefix(authHeader, "Bearer ")
@@ -42,7 +44,14 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be cal
 	user, err := client.Auth.User(context.TODO(), token)
 	if err != nil {
 		http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
-		return
+		return nil, errors.New("Invalid authorization token")
+	}
+	return user, nil
+}
+func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be called on clients request
+	user, err := authenticateRequest(w, r)
+	if err != nil {
+		log.Printf("Error while authenticating user : %v", err)
 	}
 
 	// Call actual function to get user pipelines
@@ -53,27 +62,10 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be cal
 }
 
 func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract token from Authorization Header
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
-		return
-	}
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-
-	url := os.Getenv("SUPABASE_URL")
-	key := os.Getenv("ANON_KEY") //anon_key because it is a client side request
-
-	// Validate token with Supabase
-	client := supabase.CreateClient(url, key)            // Supabase client
-	user, err := client.Auth.User(context.TODO(), token) //using context.TODO() as there is no context available
-
+	user, err := authenticateRequest(w, r)
 	if err != nil {
-		http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
-		return
+		log.Printf("Error while authenticating user : %v", err)
 	}
-
-	//..User authentication end...//
 
 	// Parse request body to get pipeline name
 	var req struct {
@@ -98,36 +90,22 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
-		return
-	}
-
-	token := strings.TrimPrefix(authHeader, "Bearer ")
-
-	url := os.Getenv("SUPABASE_URL")
-	key := os.Getenv("ANON_KEY")
-
-	client := supabase.CreateClient(url, key)
-
-	_, err := client.Auth.User(context.TODO(), token)
+	_, err := authenticateRequest(w, r)
 	if err != nil {
-		http.Error(w, "Unauthorized: Expired token", http.StatusUnauthorized)
+		log.Printf("Error while authenticating user : %v", err)
 	}
 
-	var req struct {
-		pipelineID uuid.UUID
-	}
-	json.NewDecoder(r.Body).Decode(&req)
-	//Reading request body
-	stages := services.GetPipelineStages(req.pipelineID)
+	//Fetching "pipeline_id" from request URL
+	vars := mux.Vars(r)
+	pipelineID := uuid.MustParse(vars["pipeline_id"])
+
+	stages := services.GetPipelineStages(pipelineID)
 
 	//Now i want to write this stages array to the response socket - for that i need to conver to json type
 	json.NewEncoder(w).Encode(stages)
 }
 
-// -------------------------------------------------------------
+// ------------------------------------------------------------- //
 // API handler
 
 // CREATING IMPLEMENTATION OBJECT WHICH IMPLEMENTS ALL INTERFACE METHODS
@@ -137,13 +115,19 @@ var impl = services.NewPipelineOrchestratorImpl()
 var orchestrator = services.NewPipelineOrchestratorService(impl) //PLUGGING IMPLEMENTATION TO THE ORCHESTRATOR
 
 func AddStageHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := authenticateRequest(w, r)
+	if err != nil {
+		log.Printf("Error while authenticating user : %v", err)
+	}
+	//REQUEST AUTHENTICATION DONE
+
 	var stage domain.Stage
 	if err := json.NewDecoder(r.Body).Decode(&stage); err != nil {
 		http.Error(w, "Invalid request", http.StatusBadRequest)
 		return
 	}
 
-	err := orchestrator.AddStageToPipeline(stage)
+	err = orchestrator.AddStageToPipeline(stage)
 	if err != nil {
 		http.Error(w, "Failed to add stage", http.StatusInternalServerError)
 		return
@@ -155,13 +139,21 @@ func AddStageHandler(w http.ResponseWriter, r *http.Request) {
 
 // API: Execute Pipeline
 func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
+	_, err := authenticateRequest(w, r)
+	if err != nil {
+		log.Printf("Error while authenticating user : %v", err)
+	}
+	//REQUEST AUTHENTICATION DONE
+
 	ctx := context.Background()
+	//Extracting "pipeline_id" from request URL
 	vars := mux.Vars(r)
 	pipelineID, err := uuid.Parse(vars["pipeline_id"])
 
 	result, err := orchestrator.ExecutePipeline(ctx, pipelineID)
 	if err != nil {
-		http.Error(w, "Execution failed", http.StatusInternalServerError)
+		errString := fmt.Sprintf("Execution failed : %v", err)
+		http.Error(w, errString, http.StatusInternalServerError)
 		return
 	}
 

@@ -8,12 +8,33 @@ import (
 	"github.com/google/uuid"
 )
 
-// // User represents a user in the system
-// type User struct {
-// 	ID       uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-// 	Username string    `gorm:"unique;not null" json:"username"`
-// 	Password string    `json:"-"` // Exclude from JSON responses
-// }
+type Role struct {
+	ID          uint   `gorm:"primaryKey" json:"id"`                  //will automatically map "uint" with "serial type" in the postgres
+	Name        string `gorm:"type:text;unique;not null" json:"name"` // e.g., "admin", "user", "moderator"
+	Description string `gorm:"type:text" json:"description"`
+}
+
+type Permission struct {
+	ID   uint   `gorm:"primaryKey" json:"id"`
+	Name string `gorm:"unique;not null" json:"name"` // e.g., "add_pipeline", "view_dashboard", "manage_users",
+}
+
+type RolePermission struct {
+	ID           uint       `gorm:"primaryKey"`
+	RoleID       uint       `gorm:"not null"`
+	PermissionID uint       `gorm:"not null"`
+	Role         Role       `gorm:"foreignKey:RoleID;constraint:OnDelete:CASCADE"`
+	Permission   Permission `gorm:"foreignKey:PermissionID;constraint:OnDelete:CASCADE" json:"-"`
+}
+
+// User represents a user in the system
+type User struct {
+	ID     uuid.UUID `gorm:"type:uuid;primaryKey;references:auth.users(id);onDelete:CASCADE" json:"id"`
+	Name   string    `gorm:"type:text" json:"name"`
+	Email  string    `gorm:"type:text;unique;not null" json:"email"`
+	RoleID uint      `gorm:"not null" json:"role_id"`
+	Role   Role      `gorm:"foreignKey:RoleID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL" json:"-"` //user is allowed to exist even if role is deleted
+}
 
 // type Pipeline struct {
 // 	ID     uuid.UUID `gorm:"type:uuid;primaryKey" json:"id"`
@@ -28,6 +49,7 @@ type Pipeline struct {
 	ID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Name   string    `gorm:"not null" json:"name"`
 	UserID uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
+	User   User      `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"` //if user entry is delete then delete all his pipelines
 	// Stages []Stage   `json:"stages"` // Relationship
 }
 

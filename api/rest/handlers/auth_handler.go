@@ -2,30 +2,35 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"DMP2S/internal/core/services" // Import the auth service
 )
 
 type Credentials struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string           `json:"email"`
+	Password string           `json:"password"`
+	Data     services.NewUser `json:"data"`
 }
 
 // RegisterHandler processes user sign-ups
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
+	// if r.Method != http.MethodPost {
+	// 	http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+	// 	return
+	// }
 
 	var creds Credentials
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
+	// Debug: Print the JSON payload being sent
+	payload, _ := json.Marshal(creds.Data)
+	fmt.Println("Payload sent to Supabase:", string(payload))
 
-	user, err := services.RegisterUser(creds.Email, creds.Password)
+	user, err := services.RegisterUser(creds.Email, creds.Password, creds.Data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

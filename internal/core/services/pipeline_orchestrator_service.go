@@ -71,18 +71,18 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 		StartedAt:  startTime,
 	}
 
-	// Save execution start record in DB
+	// Fetch all stages from the database
+	var domainStages []domain.Stage
+	if err := db.DB.Where("pipeline_id = ?", pipelineID).Find(&domainStages).Error; err != nil || len(domainStages) < 1 {
+		return "", errors.New("no stages found")
+	}
+
+	//If there is no error in fetching stages or there are more than 0 stages then - Save execution start record in DB
 	if err := db.DB.Create(&execution).Error; err != nil {
 		return nil, errors.New("failed to start pipeline execution")
 	}
 
 	log.Printf("Execution of Pipeline started: %s", executionID)
-
-	// Fetch all stages from the database
-	var domainStages []domain.Stage
-	if err := db.DB.Where("pipeline_id = ?", pipelineID).Find(&domainStages).Error; err != nil {
-		return "", errors.New("no stages found")
-	}
 
 	// Convert domainStages to interface{} (a slice can be passed as an interface)
 	stagesInterface := interface{}(domainStages)
@@ -104,45 +104,6 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 	return executionID, nil
 }
 
-// // ExecutePipeline executes the pipeline
-// func (s *PipelineOrchestratorService) Execute(ctx context.Context, pipelineID uuid.UUID) (interface{}, error) {
-
-// 	// Start a new pipeline execution entry
-// 	executionID := uuid.New()
-// 	startTime := time.Now()
-
-// 	execution := domain.PipelineExecution{
-// 		ID:         executionID,
-// 		PipelineID: pipelineID,
-// 		Status:     string(domain.Running),
-// 		StartedAt:  startTime,
-// 	}
-
-// 	// Save execution start record in DB
-// 	if err := db.DB.Create(&execution).Error; err != nil {
-// 		return nil, errors.New("failed to start pipeline execution")
-// 	}
-
-// 	log.Printf("Pipeline Execution started: %s", executionID)
-
-// 	// Fetch all stages in order
-// 	var stages []services.StageOrchestratorService
-// 	if err := db.DB.Where("pipeline_id = ?", pipelineID).Order("\"order\" ASC").Find(&stages).Error; err != nil {
-// 		return "", errors.New("no stages found")
-// 	}
-
-// 	//Execute each stage sequentially
-// 	for _, stage := range stages {
-// 		log.Printf("Executing stage: %s", stage.GetID())
-
-// 		// Execute stage logic (replace with actual logic)
-// 		result, err := stage.Execute(ctx, nil)
-// 	}
-
-// 	return "", nil
-// }
-
-// GetPipelineStatus retrieves the execution status of the pipeline
 func (s *PipelineOrchestratorService) GetStatus(pipelineID uuid.UUID) (domain.Status, error) {
 	return domain.Unknown, nil
 }

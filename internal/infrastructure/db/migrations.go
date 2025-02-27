@@ -27,8 +27,7 @@ func InitDatabase() {
 	port := os.Getenv("PORT")
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s database=%s port=%s sslmode=require", host, user, password, database, port)
-	//dsn := "host=db.vljolfsisxcvbjozejji.supabase.co user=postgres password=SU7pSDLDxlqCqnfd dbname=postgres port=5432 sslmode=require"
-	fmt.Println(dsn)
+
 	dialector := postgres.Open(dsn)
 	db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
@@ -40,6 +39,10 @@ func InitDatabase() {
 
 	// Auto-migrate models
 	err = DB.AutoMigrate(
+		&domain.Role{},
+		&domain.Permission{},
+		&domain.RolePermission{},
+		&domain.User{},
 		&domain.Pipeline{},
 		&domain.Stage{},
 		&domain.PipelineExecution{},
