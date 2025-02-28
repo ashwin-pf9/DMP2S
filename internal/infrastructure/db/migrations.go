@@ -42,7 +42,7 @@ func InitDatabase() {
 		&domain.Role{},
 		&domain.Permission{},
 		&domain.RolePermission{},
-		&domain.User{},
+		&domain.Profile{},
 		&domain.Pipeline{},
 		&domain.Stage{},
 		&domain.PipelineExecution{},

@@ -28,7 +28,7 @@ type RolePermission struct {
 }
 
 // User represents a user in the system
-type User struct {
+type Profile struct {
 	ID     uuid.UUID `gorm:"type:uuid;primaryKey;references:auth.users(id);onDelete:CASCADE" json:"id"`
 	Name   string    `gorm:"type:text" json:"name"`
 	Email  string    `gorm:"type:text;unique;not null" json:"email"`
@@ -46,10 +46,10 @@ type User struct {
 
 // Pipeline represents a user's pipeline
 type Pipeline struct {
-	ID     uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	Name   string    `gorm:"not null" json:"name"`
-	UserID uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
-	User   User      `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"` //if user entry is delete then delete all his pipelines
+	ID      uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	Name    string    `gorm:"not null" json:"name"`
+	UserID  uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
+	Profile Profile   `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"` //if user entry is delete then delete all his pipelines
 	// Stages []Stage   `json:"stages"` // Relationship
 }
 
