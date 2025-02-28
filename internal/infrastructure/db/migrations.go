@@ -53,4 +53,28 @@ func InitDatabase() {
 	}
 
 	fmt.Println("Database connected and migrated successfully!")
+
+	//-------------
+
+	// Read the SQL file
+	sqlFile := "/Users/ashwintirpude/DMP2S/internal/infrastructure/db/public.user.sql"
+	content, err := os.ReadFile(sqlFile)
+	if err != nil {
+		log.Fatalf("Failed to read SQL file: %v", err)
+	}
+
+	// Get the raw database connection from GORM
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatalf("Failed to get raw DB from GORM: %v", err)
+	}
+
+	// Execute the SQL file
+	_, err = sqlDB.Exec(string(content))
+	if err != nil {
+		log.Fatalf("Failed to execute SQL file: %v", err)
+	}
+
+	fmt.Println("SQL file executed successfully.")
+
 }

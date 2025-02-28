@@ -48,11 +48,14 @@ func authenticateRequest(w http.ResponseWriter, r *http.Request) (*supabase.User
 	}
 	return user, nil
 }
+
 func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be called on clients request
+	//REQUEST AUTHENTICATION
 	user, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
 	}
+	//REQUEST AUTHENTICATION DONE
 
 	// Call actual function to get user pipelines
 	pipelines := services.GetUsersPipelines(user.ID)
@@ -62,10 +65,12 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be cal
 }
 
 func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
+	//REQUEST AUTHENTICATION
 	user, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
 	}
+	//REQUEST AUTHENTICATION DONE
 
 	// Parse request body to get pipeline name
 	var req struct {
@@ -90,10 +95,12 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
+	//REQUEST AUTHENTICATION
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
 	}
+	//REQUEST AUTHENTICATION DONE
 
 	//Fetching "pipeline_id" from request URL
 	vars := mux.Vars(r)
@@ -115,9 +122,11 @@ var impl = services.NewPipelineOrchestratorImpl()
 var orchestrator = services.NewPipelineOrchestratorService(impl) //PLUGGING IMPLEMENTATION TO THE ORCHESTRATOR
 
 func AddStageHandler(w http.ResponseWriter, r *http.Request) {
+	//REQUEST AUTHENTICATION
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
+		return
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -139,6 +148,7 @@ func AddStageHandler(w http.ResponseWriter, r *http.Request) {
 
 // API: Execute Pipeline
 func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
+	//REQUEST AUTHENTICATION
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
