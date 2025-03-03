@@ -30,6 +30,8 @@ func (imp *PipelineOrchestratorImpl) AddStage(stage domain.Stage) error {
 }
 
 func (imp *PipelineOrchestratorImpl) Execute(ctx context.Context, input interface{}) (interface{}, error) {
+	//   CTX
+	/*-- ctx parameter contains "executionID" --*/
 
 	// Type assertion to convert interface{}
 	// Type assertion for domain.Stage slice

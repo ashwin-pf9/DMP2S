@@ -69,6 +69,7 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
+		return
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -99,6 +100,7 @@ func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
+		return
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -152,6 +154,7 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
+		return
 	}
 	//REQUEST AUTHENTICATION DONE
 

@@ -77,12 +77,15 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 		return "", errors.New("no stages found")
 	}
 
-	//If there is no error in fetching stages or there are more than 0 stages then - Save execution start record in DB
+	//If there is no error in fetching stages and there are more than 0 stages then - Save execution start record in DB
 	if err := db.DB.Create(&execution).Error; err != nil {
 		return nil, errors.New("failed to start pipeline execution")
 	}
 
 	log.Printf("Execution of Pipeline started: %s", executionID)
+
+	//adding "executionID" in the context
+	ctx = context.WithValue(ctx, "executionID", executionID)
 
 	// Convert domainStages to interface{} (a slice can be passed as an interface)
 	stagesInterface := interface{}(domainStages)
@@ -91,7 +94,7 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 	_, err := s.orchestrator.Execute(ctx, stagesInterface)
 	if err != nil {
 		execution.Status = string(domain.Failed)
-		db.DB.Save(execution)
+		db.DB.Save(&execution)
 		return nil, err
 	}
 

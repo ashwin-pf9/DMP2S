@@ -94,10 +94,10 @@ type StageExecution struct {
 type Status string
 
 const (
-	Pending Status = "Pending"
-	Running Status = "Running"
-	Failed  Status = "Failed"
-	Success Status = "Success"
-
-	Unknown Status = "Unknown" //Error occured before fetching status
+	Pending   Status = "Pending"
+	Running   Status = "Running"
+	Failed    Status = "Failed"
+	Success   Status = "Success"
+	Completed Status = "Completed"
+	Unknown   Status = "Unknown" //Error occured before fetching status
 )

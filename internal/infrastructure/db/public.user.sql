@@ -9,6 +9,9 @@ drop policy "Users can update own profile." on profiles;
 
 /*-- --*/
 
+--Setting time zone of postgres 
+ALTER DATABASE postgres SET TIMEZONE TO 'Asia/Kolkata';
+
 
 alter table profiles
   enable row level security;
