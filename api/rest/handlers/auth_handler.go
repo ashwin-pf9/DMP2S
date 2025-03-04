@@ -64,5 +64,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(user)
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": user.AccessToken, // Ensure `user` has a valid Token field
+	})
 }

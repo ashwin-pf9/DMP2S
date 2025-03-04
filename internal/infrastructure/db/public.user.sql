@@ -1,5 +1,7 @@
 /*-- FOR TESTING PURPOSES - should be removed --*/
 
+REINDEX TABLE public.profiles; --DANGEROUS
+
 alter table profiles
   disable row level security;
 

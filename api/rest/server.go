@@ -7,6 +7,7 @@ import (
 	"DMP2S/api/rest/handlers" // Import handlers
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 // StartServer initializes and starts the HTTP server
@@ -40,8 +41,16 @@ func StartServer() error {
 	*/
 	router.HandleFunc("/pipelines/{pipeline_id}/execute", handlers.ExecutePipelineHandler).Methods("POST")
 
+	// Enable CORS using `rs/cors` package
+	corsHandler := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow frontend
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
+
 	// Start the server
 	port := ":8080"
 	fmt.Println("Server started on", port)
-	return http.ListenAndServe(port, router)
+	return http.ListenAndServe(port, corsHandler.Handler(router))
 }
