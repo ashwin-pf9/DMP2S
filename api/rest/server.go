@@ -11,7 +11,7 @@ import (
 )
 
 // StartServer initializes and starts the HTTP server
-func StartServer() error {
+func StartRESTServer() error {
 	//Better than mux.NewRouter(), gives more control, supports dynamic routes
 	router := mux.NewRouter()
 

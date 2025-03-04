@@ -9,15 +9,17 @@ import (
 )
 
 func main() {
-	fmt.Println("Starting API server...")
+	fmt.Println("Starting REST API server...")
 
 	// Initialize database and run migrations
 	fmt.Println("Running database migrations...")
 	db.InitDatabase() // Running auto migrations - .env LOADED
 
 	// Call the server setup function
-	err := rest.StartServer()
+	err := rest.StartRESTServer()
 	if err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+		log.Fatalf("Failed to start REST server: %v", err)
 	}
+
+
 }

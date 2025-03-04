@@ -1,0 +1,24 @@
+.pipeline-card {
+    padding: 12px 16px;
+    background-color: lightgray;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  
+  .pipeline-card:hover {
+    background-color: #bbb;
+    transform: scale(1.05);
+  }
+  
+  .pipeline-card.selected {
+    background-color: dodgerblue;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 2px 2px 10px rgba(30, 144, 255, 0.5);
+  }
+  

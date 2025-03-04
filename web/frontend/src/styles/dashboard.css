@@ -1,45 +1,108 @@
+/* 🔹 Full Dashboard Layout */
 .dashboard {
-    padding: 20px;
-    text-align: center;
-  }
-  
-  .pipeline-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-  }
-  
-  .pipeline-card {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    width: 200px;
-    text-align: center;
-    transition: 0.3s;
-  }
-  
-  .pipeline-card:hover {
-    background-color: #e9ecef;
-  }
-  
-  .stages-container {
-    margin-top: 20px;
-    text-align: left;
-    padding: 10px;
-  }
-  
-  .stages-container ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .stages-container li {
-    padding: 5px;
-    background-color: #f1f1f1;
-    margin: 5px 0;
-    border-radius: 5px;
-  }
-  
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4;
+  font-family: Arial, sans-serif;
+}
+
+/* 🔹 Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: #2c3e50;
+  color: white;
+}
+
+.project-name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.user-profile .profile-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* 🔹 Dashboard Main Content */
+.dashboard-content {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 60px);
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 🔹 Pipeline List (Grid Layout) */
+/* .pipeline-list {
+  display: grid;
+  gap: 15px 2px; 
+  row-gap: 5px;
+  width: 100%;
+  padding: 20px;
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
+} */
+.pipeline-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* ✅ 4 cards per row */
+  gap: 15px 12px; /* 🔹 Reduced vertical and horizontal gap */
+  width: 100%;
+  padding: 20px; /* 🔹 Reduced padding */
+  margin: 0; /* 🔹 Removed unnecessary margins */
+  height: auto; /* 🔹 Prevents extra height */
+  align-content: start; /* 🔹 Ensures items stay compact */
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🔹 Pipeline Card Styling */
+.pipeline-card {
+  background: linear-gradient(135deg, #3498db, #2ecc71);
+  color: white;
+  padding: 10px;
+  height: 100px; /* ✅ Adjusted height to make it more compact */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pipeline-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔹 When a pipeline is clicked, shift pipelines to the left and stack vertically */
+.dashboard-content.shift-left .pipeline-list {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow-y: auto;
+  height: auto;
+}
+
+.dashboard-content.shift-left .pipeline-card {
+  width: 100%;
+  background: #1abc9c;
+  height: 80px; /* ✅ Adjusted height when stacked vertically */
+}
+
+/* 🔹 Stage List (Appears on the right) */
+.stages-container {
+  flex-grow: 1;
+  padding: 20px;
+  background: #ffffff;
+  border-left: 2px solid #ddd;
+  transition: opacity 0.3s ease-in-out;
+}
