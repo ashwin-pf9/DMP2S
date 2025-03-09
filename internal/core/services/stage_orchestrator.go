@@ -4,6 +4,7 @@ import (
 	"DMP2S/internal/core/domain"
 	"context"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -25,8 +26,12 @@ func (s *StageOrchestratorImpl) GetID() uuid.UUID {
 func (s *StageOrchestratorImpl) Execute(ctx context.Context, input interface{}) (interface{}, error) {
 	//code for executing a stage
 	stage := input.(domain.Stage)
-	
+
 	log.Printf("execution of stage \"%s\" started", stage.Name)
+
+	// Inside ExecutePipeline function, before executing each stage:
+	time.Sleep(10 * time.Second) // Pause for 2 seconds
+
 	log.Printf("execution of stage \"%s\" ended", stage.Name)
 	return "", nil //TEMPORARY
 }

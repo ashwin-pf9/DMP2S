@@ -2,9 +2,11 @@ package services
 
 import (
 	"DMP2S/internal/core/domain"
+	"DMP2S/internal/core/events"
 	"context"
 	"errors"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -48,16 +50,26 @@ func (imp *PipelineOrchestratorImpl) Execute(ctx context.Context, input interfac
 
 		// Call methods on the service layer
 		log.Printf("Executing stage: %s", stage.Name)
+		// Broadcast that the stage has started
+		events.SendUpdate(stage.ID.String(), "Running")
 
 		// Execute stage
 		result, err := stageService.ExecuteStage(ctx, stage)
 		if err != nil {
 			log.Printf("Stage %s failed: %v", stage.Name, err)
+			// Broadcast failure status
+			events.SendUpdate(stage.ID.String(), "Failed")
+
 			stageService.HandleError(ctx, err)
 			return nil, err
 		}
 
 		log.Printf("Stage %s succeeded: %v\n", stage.Name, result)
+		// Broadcast success status
+		events.SendUpdate(stage.ID.String(), "Completed")
+
+		//pausing for a second
+		time.Sleep(2 * time.Second)
 	}
 
 	return "an object", nil

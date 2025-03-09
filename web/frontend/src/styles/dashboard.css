@@ -1,25 +1,25 @@
-/* 🔹 Full Dashboard Layout */
+/* 
 .dashboard {
-  width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f4f4f4;
-  font-family: Arial, sans-serif;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f8f9fa;
 }
 
-/* 🔹 Top Bar */
+
 .top-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: #2c3e50;
+  background-color: #007bff;
   color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
 }
 
 .project-name {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
 }
 
@@ -29,7 +29,141 @@
   border-radius: 50%;
 }
 
-/* 🔹 Dashboard Main Content */
+
+.create-pipeline {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.pipeline-input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.create-button {
+  padding: 8px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.create-button:hover {
+  background-color: #218838;
+}
+
+
+.dashboard-content {
+  display: flex;
+  gap: 20px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.dashboard-content.shift-left {
+  transform: translateX(-30%);
+}
+
+
+.pipeline-list {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.no-pipelines {
+  text-align: center;
+  font-style: italic;
+  color: #6c757d;
+}
+
+
+.stages-container {
+  flex-grow: 1;
+  padding: 15px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+} */
+
+
+
+
+ 
+.dashboard {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4;
+  font-family: Arial, sans-serif;
+}
+
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  background: linear-gradient(135deg, #2c3e50, #1e2a38);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-bottom: 2px solid #1abc9c;
+}
+
+.project-name {
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.user-profile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.profile-icon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  border: 2px solid white;
+  transition: transform 0.2s ease-in-out;
+}
+
+.profile-icon:hover {
+  transform: scale(1.1);
+  border-color: #1abc9c;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 55px;
+  right: 0;
+  background: white;
+  color: black;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 150px;
+  display: none;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+
 .dashboard-content {
   display: flex;
   width: 100%;
@@ -37,35 +171,25 @@
   transition: transform 0.3s ease-in-out;
 }
 
-/* 🔹 Pipeline List (Grid Layout) */
-/* .pipeline-list {
-  display: grid;
-  gap: 15px 2px; 
-  row-gap: 5px;
-  width: 100%;
-  padding: 20px;
-  overflow-y: auto;
-  transition: all 0.3s ease-in-out;
-} */
+
 .pipeline-list {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* ✅ 4 cards per row */
-  gap: 15px 12px; /* 🔹 Reduced vertical and horizontal gap */
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 15px 12px; 
   width: 100%;
-  padding: 20px; /* 🔹 Reduced padding */
-  margin: 0; /* 🔹 Removed unnecessary margins */
-  height: auto; /* 🔹 Prevents extra height */
-  align-content: start; /* 🔹 Ensures items stay compact */
+  padding: 20px; 
+  margin: 0; 
+  height: auto; 
+  align-content: start; 
   overflow-y: auto;
   transition: all 0.3s ease-in-out;
 }
 
-/* 🔹 Pipeline Card Styling */
 .pipeline-card {
   background: linear-gradient(135deg, #3498db, #2ecc71);
   color: white;
   padding: 10px;
-  height: 100px; /* ✅ Adjusted height to make it more compact */
+  height: 100px; 
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -82,7 +206,7 @@
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* 🔹 When a pipeline is clicked, shift pipelines to the left and stack vertically */
+
 .dashboard-content.shift-left .pipeline-list {
   width: 20%;
   display: flex;
@@ -95,14 +219,41 @@
 .dashboard-content.shift-left .pipeline-card {
   width: 100%;
   background: #1abc9c;
-  height: 80px; /* ✅ Adjusted height when stacked vertically */
+  height: 80px;
 }
 
-/* 🔹 Stage List (Appears on the right) */
+
 .stages-container {
   flex-grow: 1;
   padding: 20px;
   background: #ffffff;
   border-left: 2px solid #ddd;
   transition: opacity 0.3s ease-in-out;
+}
+
+ /* CREATE PIPELINE button  */
+ .create-pipeline-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px; /* Move to the right instead of left */
+  background-color: #007bff;
+  color: white;
+  padding: 14px 18px; /* Keeps it compact */
+  border: none;
+  border-radius: 50px; /* Rounded edges */
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000; /* Keeps it above all elements */
+  transition: all 0.3s ease-in-out;
+  width: auto; /* Ensures button doesn't stretch */
+  min-width: 50px; /* Set minimum width */
+  min-height: 50px; /* Set minimum height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.create-pipeline-button:hover {
+background-color: #0056b3;
 }

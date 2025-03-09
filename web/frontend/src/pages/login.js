@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config";
+import "../styles/login.css";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -32,6 +33,7 @@ const Login = () => {
       
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user_name", data.userName)
         console.log("Navigating to dashboard...");
         navigate("/dashboard"); // Ensure this runs only once
       }

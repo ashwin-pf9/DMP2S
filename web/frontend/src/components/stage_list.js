@@ -8,7 +8,7 @@ const StageList = ({ stages }) => {
 
   return (
     <div className="stage-list">
-      <h3>Pipeline Stages</h3>
+      {/* <h3>Pipeline Stages</h3>
       <ul>
         {stages.map((stage) => (
           <li key={stage.id} className="stage-card">
@@ -17,7 +17,7 @@ const StageList = ({ stages }) => {
             <span className="stage-status">{stage.status}</span>
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };

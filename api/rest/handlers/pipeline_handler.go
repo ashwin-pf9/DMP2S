@@ -54,6 +54,12 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be cal
 	user, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -69,7 +75,12 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	user, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
-		return
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -100,7 +111,12 @@ func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
-		return
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
 	}
 	//REQUEST AUTHENTICATION DONE
 
@@ -128,24 +144,30 @@ func AddStageHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
-		return
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
 	}
 	//REQUEST AUTHENTICATION DONE
 
 	var stage domain.Stage
 	if err := json.NewDecoder(r.Body).Decode(&stage); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
+		http.Error(w, `{"error": "Invalid request"}`, http.StatusBadRequest)
 		return
 	}
 
 	err = orchestrator.AddStageToPipeline(stage)
 	if err != nil {
-		http.Error(w, "Failed to add stage", http.StatusInternalServerError)
+		http.Error(w, `{"error": "Failed to add stage"}`, http.StatusInternalServerError)
 		return
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Stage added successfully"))
+	json.NewEncoder(w).Encode(map[string]string{"message": "Stage added successfully"})
 }
 
 // API: Execute Pipeline
@@ -154,7 +176,12 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	_, err := authenticateRequest(w, r)
 	if err != nil {
 		log.Printf("Error while authenticating user : %v", err)
-		return
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
 	}
 	//REQUEST AUTHENTICATION DONE
 

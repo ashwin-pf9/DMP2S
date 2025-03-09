@@ -39,7 +39,10 @@ func StartRESTServer() error {
 	/*
 		Now that stages are added to the pipeline : user can call on these endpoints for further operation
 	*/
-	router.HandleFunc("/pipelines/{pipeline_id}/execute", handlers.ExecutePipelineHandler).Methods("POST")
+	router.HandleFunc("/pipelines/{pipeline_id}/start", handlers.ExecutePipelineHandler).Methods("POST")
+
+	/*--  Endpoint for WEB SOCKET --*/
+	router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
 
 	// Enable CORS using `rs/cors` package
 	corsHandler := cors.New(cors.Options{

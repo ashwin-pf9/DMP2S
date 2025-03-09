@@ -4,6 +4,7 @@ import (
 	"DMP2S/internal/infrastructure/supabaseclient"
 	"context"
 	"errors"
+	"log"
 
 	"github.com/nedpals/supabase-go"
 )
@@ -36,8 +37,14 @@ func RegisterUser(email string, password string, name string, roleID uint) (*sup
 	return user, nil
 }
 
+type AuthenticatedUser struct {
+	UserID   string `json:"user_id"`
+	UserName string `json:"name"`
+	Token    string `json:"token"`
+}
+
 // LoginUser handles user login
-func LoginUser(email, password string) (*supabase.AuthenticatedDetails, error) {
+func LoginUser(email, password string) (*AuthenticatedUser, error) {
 	supabaseClient := supabaseclient.InitSupabaseClient()
 	user, err := supabaseClient.Auth.SignIn(context.Background(), supabase.UserCredentials{
 		Email:    email,
@@ -46,5 +53,25 @@ func LoginUser(email, password string) (*supabase.AuthenticatedDetails, error) {
 	if err != nil {
 		return nil, errors.New("login failed: " + err.Error())
 	}
-	return user, nil
+
+	var profile []struct {
+		UserName string `json:"name"`
+	}
+
+	err = supabaseClient.DB.
+		From("profiles").
+		Select("name").
+		Eq("id", user.User.ID).
+		Execute(&profile)
+
+	log.Println("in login user function")
+	if err != nil {
+		return nil, errors.New("failed to fetch user profile: " + err.Error())
+	}
+
+	return &AuthenticatedUser{
+		UserID:   user.User.ID,
+		UserName: profile[0].UserName,
+		Token:    user.AccessToken,
+	}, nil
 }

@@ -1,0 +1,68 @@
+.pipeline-creator-container {
+  width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.pipeline-creator-container h2, .pipeline-creator-container h3 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.pipeline-input,
+.stage-input input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.stage-input {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.add-stage-button, .submit-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-stage-button {
+  background: #007bff;
+  color: white;
+}
+
+.submit-button {
+  background: #28a745;
+  color: white;
+}
+
+.add-stage-button:hover {
+  background: #0056b3;
+}
+
+.submit-button:hover {
+  background: #218838;
+}
+
+.submit-button:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+}

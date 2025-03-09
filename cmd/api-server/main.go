@@ -20,6 +20,4 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to start REST server: %v", err)
 	}
-
-
 }

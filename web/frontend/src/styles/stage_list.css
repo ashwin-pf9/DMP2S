@@ -1,37 +1,40 @@
+/* 🔹 Stage List */
 .stage-list {
-    background-color: #f8f9fa;
-    padding: 16px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    width: 60%;
-    margin: 10px auto;
-  }
-  
-  .stage-list h3 {
-    margin-bottom: 10px;
-    color: #333;
-  }
-  
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .stage-card {
-    background: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    margin: 8px 0;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-    transition: 0.3s ease-in-out;
-  }
-  
-  .stage-card:hover {
-    transform: scale(1.02);
-  }
-  
-  .stage-status {
-    font-weight: bold;
-    color: green;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* 🔹 Header */
+.stage-list h3 {
+  margin-bottom: 10px;
+  color: #333;
+  text-align: center;
+}
+
+/* 🔹 Stage Cards */
+.stage-card {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  transition: 0.3s ease-in-out;
+}
+
+.stage-card:hover {
+  transform: scale(1.02);
+}
+
+/* 🔹 Stage Status */
+.stage-status {
+  font-weight: bold;
+  color: green;
+  display: block;
+}
