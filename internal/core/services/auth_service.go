@@ -4,7 +4,6 @@ import (
 	"DMP2S/internal/infrastructure/supabaseclient"
 	"context"
 	"errors"
-	"log"
 
 	"github.com/nedpals/supabase-go"
 )
@@ -64,7 +63,6 @@ func LoginUser(email, password string) (*AuthenticatedUser, error) {
 		Eq("id", user.User.ID).
 		Execute(&profile)
 
-	log.Println("in login user function")
 	if err != nil {
 		return nil, errors.New("failed to fetch user profile: " + err.Error())
 	}

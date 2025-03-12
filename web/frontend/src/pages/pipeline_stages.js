@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { fetchStages, startPipeline } from "../api/api";
+import { Trash2 } from "lucide-react";
+import { fetchStages, startPipeline, deletePipeline } from "../api/api";
 import "../styles/pipeline_stages.css";
 
 const PipelineStages = () => {
@@ -67,6 +68,19 @@ const PipelineStages = () => {
     }
   };
 
+  const handleDeletePipeline = async () => {
+    try {
+      await deletePipeline(id);
+    } catch (error) {
+      if (error.message === "Unauthorized") {
+        alert("Session expired. Redirecting to login...");
+        navigate("/login");
+      } else {
+        alert(`Failed to delete pipeline ${id}: ${error.message}`);
+      }
+    }
+  }
+
   return (
     <div className="pipeline-stages">
       <h2>{pipelineName}</h2>
@@ -81,7 +95,13 @@ const PipelineStages = () => {
         ))}
       </ul>
 
-      <button className="start-button" onClick={handleStartPipeline}>Start Pipeline</button>
+      {/* <button className="start-button" onClick={handleStartPipeline}>Start Pipeline</button> */}
+      <div className="buttons-container">
+        <button className="start-button" onClick={handleStartPipeline}>Start Pipeline</button>
+        <button className="delete-button" onClick={handleDeletePipeline}>
+          <Trash2 size={20} /> Delete Pipeline
+        </button>
+      </div>
     </div>
   );
 };

@@ -40,9 +40,15 @@ func StartRESTServer() error {
 		Now that stages are added to the pipeline : user can call on these endpoints for further operation
 	*/
 	router.HandleFunc("/pipelines/{pipeline_id}/start", handlers.ExecutePipelineHandler).Methods("POST")
+	router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
 
 	/*--  Endpoint for WEB SOCKET --*/
 	router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
+
+	// // Serve React frontend (static files)
+	// staticDir := "../../web/frontend/build"
+	// router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticDir+"/static"))))
+	// router.PathPrefix("/").Handler(http.FileServer(http.Dir(staticDir)))
 
 	// Enable CORS using `rs/cors` package
 	corsHandler := cors.New(cors.Options{

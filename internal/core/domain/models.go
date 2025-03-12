@@ -49,7 +49,7 @@ type Pipeline struct {
 	ID      uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Name    string    `gorm:"not null" json:"name"`
 	UserID  uuid.UUID `gorm:"type:uuid;not null" json:"user_id"`
-	Profile Profile   `gorm:"foreignKey:UserID;OnUpdate:CASCADE,OnDelete:CASCADE" json:"-"` //if user entry is delete then delete all his pipelines
+	Profile Profile   `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE" json:"-"` //if user entry is delete then delete all his pipelines
 	// Stages []Stage   `json:"stages"` // Relationship
 }
 
@@ -64,14 +64,14 @@ type Stage struct {
 	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	Name       string    `gorm:"not null" json:"name"`
 	PipelineID uuid.UUID `gorm:"type:uuid;not null" json:"pipeline_id"`
-	Pipeline   Pipeline  `gorm:"foreignKey:PipelineID" json:"-"`
+	Pipeline   Pipeline  `gorm:"foreignKey:PipelineID;constraint:OnDelete:CASCADE" json:"-"`
 }
 
 // PipelineExecution tracks a pipeline run
 type PipelineExecution struct {
 	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	PipelineID uuid.UUID `gorm:"type:uuid;not null" json:"pipeline_id"`
-	Pipeline   Pipeline  `gorm:"foreignKey:PipelineID" json:"-"`
+	Pipeline   Pipeline  `gorm:"foreignKey:PipelineID;constraint:OnDelete:CASCADE" json:"-"`
 	Status     string    `gorm:"type:varchar(50);not null;default:'pending'" json:"status"`
 	StartedAt  time.Time `gorm:"default:now()" json:"started_at"`
 	EndedAt    time.Time `json:"ended_at,omitempty"`
@@ -82,7 +82,7 @@ type StageExecution struct {
 	ID           uuid.UUID         `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	StageID      uuid.UUID         `gorm:"type:uuid;not null" json:"stage_id"`
 	ExecutionID  uuid.UUID         `gorm:"type:uuid;not null" json:"execution_id"`
-	Stage        Stage             `gorm:"foreignKey:StageID" json:"-"`
+	Stage        Stage             `gorm:"foreignKey:StageID;constraint:OnDelete:CASCADE" json:"-"`
 	Execution    PipelineExecution `gorm:"foreignKey:ExecutionID" json:"-"`
 	Status       string            `gorm:"type:varchar(50);not null;default:'pending'" json:"status"`
 	StartedAt    time.Time         `gorm:"default:now()" json:"started_at"`

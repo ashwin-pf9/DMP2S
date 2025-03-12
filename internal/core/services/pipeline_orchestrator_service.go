@@ -107,6 +107,18 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, pipel
 	return executionID, nil
 }
 
+func (s *PipelineOrchestratorService) DeletePipeline(pipelineID uuid.UUID) error {
+
+	err := db.DB.Where("id = ?", pipelineID).Delete(&domain.Pipeline{}).Error
+	if err != nil {
+		log.Println("Error deleting pipeline:", err)
+		return err
+	}
+
+	log.Println("Pipeline deleted successfully")
+	return nil
+}
+
 func (s *PipelineOrchestratorService) GetStatus(pipelineID uuid.UUID) (domain.Status, error) {
 	return domain.Unknown, nil
 }

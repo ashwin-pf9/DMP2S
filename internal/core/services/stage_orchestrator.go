@@ -30,7 +30,7 @@ func (s *StageOrchestratorImpl) Execute(ctx context.Context, input interface{}) 
 	log.Printf("execution of stage \"%s\" started", stage.Name)
 
 	// Inside ExecutePipeline function, before executing each stage:
-	time.Sleep(10 * time.Second) // Pause for 2 seconds
+	time.Sleep(3 * time.Second) // Pause for 3 seconds
 
 	log.Printf("execution of stage \"%s\" ended", stage.Name)
 	return "", nil //TEMPORARY

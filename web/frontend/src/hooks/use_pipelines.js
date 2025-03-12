@@ -29,18 +29,18 @@ const usePipelines = () => {
     }
   };
 
-  const handlePipelineClick = async (pipelineId) => {
-    if (selectedPipeline === pipelineId) return;
-    setSelectedPipeline(pipelineId);
+  // const handlePipelineClick = async (pipelineId) => {
+  //   if (selectedPipeline === pipelineId) return;
+  //   setSelectedPipeline(pipelineId);
 
-    try {
-      const data = await fetchStages(pipelineId);
-      if (!Array.isArray(data)) throw new Error("Invalid stage data format");
-      setStages(data);
-    } catch {
-      setStages([]);
-    }
-  };
+  //   try {
+  //     const data = await fetchStages(pipelineId);
+  //     if (!Array.isArray(data)) throw new Error("Invalid stage data format");
+  //     setStages(data);
+  //   } catch {
+  //     setStages([]);
+  //   }
+  // };
 
   const handleCreatePipeline = async (name) => {
     if (!name.trim()) return;
@@ -63,7 +63,7 @@ const usePipelines = () => {
     stages,
     loading,
     error,
-    handlePipelineClick,
+    // handlePipelineClick,
     handleCreatePipeline,
   };
 };

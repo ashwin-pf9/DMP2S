@@ -122,7 +122,12 @@ func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
 
 	//Fetching "pipeline_id" from request URL
 	vars := mux.Vars(r)
-	pipelineID := uuid.MustParse(vars["pipeline_id"])
+	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+	if err != nil {
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+		return
+	}
 
 	stages := services.GetPipelineStages(pipelineID)
 
@@ -189,6 +194,11 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	//Extracting "pipeline_id" from request URL
 	vars := mux.Vars(r)
 	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+	if err != nil {
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+		return
+	}
 
 	result, err := orchestrator.ExecutePipeline(ctx, pipelineID)
 	if err != nil {
@@ -198,4 +208,38 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(result)
+}
+
+func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
+	//REQUEST AUTHENTICATION
+	_, err := authenticateRequest(w, r)
+	if err != nil {
+		log.Printf("Error while authenticating user : %v", err)
+
+		// Send JSON error response
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+		return // Exit early to prevent nil pointer dereference
+	}
+	//REQUEST AUTHENTICATION DONE
+
+	//Extracting "pipeline_id" from request URL
+	vars := mux.Vars(r)
+	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+	if err != nil {
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+		return
+	}
+
+	err = orchestrator.DeletePipeline(pipelineID)
+	if err != nil {
+		errString := fmt.Sprintf("Deletion failed : %v", err)
+		http.Error(w, errString, http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Pipeline deleted successfully"})
 }

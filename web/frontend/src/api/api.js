@@ -1,63 +1,68 @@
 import API_BASE_URL from "../config";
 
 const getAuthToken = () => {
-    return localStorage.getItem("token"); // Retrieve token from localStorage
-  };
-  
-  export const fetchPipelines = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/pipelines`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${getAuthToken()}`,
-          "Content-Type": "application/json"
-        }
-      });
+  return localStorage.getItem("token"); // Retrieve token from localStorage
+};
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch pipelines: ${response.statusText}`);
+export const fetchPipelines = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/pipelines`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${getAuthToken()}`,
+        "Content-Type": "application/json"
       }
-  
-      const data = await response.json();
-  
-      if (!data || !Array.isArray(data)) {
-        console.error("Invalid pipeline data format:", data);
-        throw new Error("Invalid pipeline data format");
-      }
-  
-      return data;
-    } catch (error) {
-      if (error.message === "Invalid authorization token") {
-        alert("Session expired. Redirecting to login...");
-        window.location.href = "/login"; // Redirect user to login page
-      }  else if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
-        console.error("Backend is unreachable:", error);
-        throw new Error("Backend is unreachable. Please try again later.");
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch pipelines: ${response.statusText}`);
     }
-   
 
-      console.error("Error fetching pipelines:", error);
-      throw error;  // Throw error instead of returning an empty array
+    const data = await response.json();
+
+    if (!data || !Array.isArray(data)) {
+      console.error("Invalid pipeline data format:", data);
+      throw new Error("Invalid pipeline data format");
+    }
+
+    return data;
+  } catch (error) {
+    if (error.message === "Invalid authorization token") {
+      alert("Session expired. Redirecting to login...");
+      window.location.href = "/login"; // Redirect user to login page
+    } else if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+      console.error("Backend is unreachable:", error);
+      throw new Error("Backend is unreachable. Please try again later.");
+    }
+
+
+    console.error("Error fetching pipelines:", error);
+    throw error;  // Throw error instead of returning an empty array
   }
-  };
-  
+};
+
 
 export const fetchStages = async (pipelineId) => {
-  const response = await fetch(`${API_BASE_URL}/pipelines/${pipelineId}/stages`,{
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${getAuthToken()}`,
-      "Content-Type": "application/json"
+  try {
+    const response = await fetch(`${API_BASE_URL}/pipelines/${pipelineId}/stages`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${getAuthToken()}`,
+        "Content-Type": "application/json"
+      }
+    });
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error("Unauthorized");
+      }
+      throw new Error("Failed to fetch stages");
     }
-  });
-  if (!response.ok){ 
-    if (response.status === 401) {
-      throw new Error("Unauthorized");
-    }
-    throw new Error("Failed to fetch stages");
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching stages:", error);
   }
-  
-  return response.json();
+
+
 };
 
 export const createPipeline = async (pipelineName) => {
@@ -80,8 +85,39 @@ export const createPipeline = async (pipelineName) => {
 
     return await response.json();
   } catch (error) {
-    console.error("Error creating pipeline:", error);
-    throw error;
+    alert(`Error: ${error.message}`);
+  }
+};
+
+export const deletePipeline = async (pipelineId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/pipelines/${pipelineId}/delete`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${getAuthToken()}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.log("log - Unauthorized")
+        throw new Error("Unauthorized");
+      }
+      throw new Error(`Failed to delete pipeline: ${response.statusText}`);
+    }
+
+    alert("Pipeline deleted successfully!");
+    window.location.href = "/dashboard";
+
+    return await response.json();
+  } catch (error) {
+    if (error.message === "Unauthorized") {
+      alert("Session expired. Redirecting to login...");
+      window.location.href = "/login"; // Redirect user to login page
+    } else {
+      alert(`Error: ${error.message}`);
+    }
   }
 };
 
@@ -105,8 +141,12 @@ export const startPipeline = async (pipelineId) => {
 
     return await response.json();
   } catch (error) {
-    console.error("Error starting pipeline:", error);
-    throw error;
+    if (error.message === "Unauthorized") {
+      alert("Session expired. Redirecting to login...");
+      window.location.href = "/login"; // Redirect user to login page
+    } else {
+      alert(`Error: ${error.message}`);
+    }
   }
 };
 
@@ -133,7 +173,6 @@ export const createStage = async (pipelineId, stage) => {
 
     return await response.json();
   } catch (error) {
-    console.error("Error creating stage:", error);
-    throw error;
+    alert(`Error: ${error.message}`);
   }
 };

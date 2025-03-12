@@ -72,12 +72,12 @@ const PipelineCreator = () => {
             value={stage.name}
             onChange={(e) => handleStageChange(index, "name", e.target.value)}
           />
-          <input
+          {/* <input
             type="text"
             placeholder="Stage Description"
             value={stage.description}
             onChange={(e) => handleStageChange(index, "description", e.target.value)}
-          />
+          /> */}
         </div>
       ))}
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"DMP2S/internal/core/services"
 	"encoding/json"
-	"log"
 	"net/http"
 )
 
@@ -65,8 +64,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	log.Println(user.Token)
-	log.Println(user.UserName)
+
 	json.NewEncoder(w).Encode(map[string]string{
 		"token":    user.Token, // Ensure `user` has a valid Token field
 		"userName": user.UserName,
