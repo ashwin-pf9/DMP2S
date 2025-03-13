@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import profilePic from "../assets/profile-pic.jpg";
 import "../styles/top_bar.css"; // Make sure this file includes the above CSS
 
 const TopBar = () => {
@@ -10,7 +11,7 @@ const TopBar = () => {
   };
 
   const handleLogout = () => {
-    // Add logout logic here (e.g., clearing tokens, redirecting)
+    localStorage.clear();
     navigate("/login");
   };
 
@@ -19,15 +20,11 @@ const TopBar = () => {
       <div className="project-name">Pipeline Management System</div>
 
       <div className="user-profile">
-        <img
-          src="/path-to-profile-pic.jpg"
-          alt="Profile"
-          className="profile-icon"
-        />
-        
+        <img src={profilePic} alt="Profile" className="profile-icon" />
+
         <div className="profile-dropdown">
-          <a onClick={handleEditProfile}>Edit Profile</a>
-          <a onClick={handleLogout}>Log Out</a>
+          <button onClick={handleEditProfile} className="dropdown-item">Edit Profile</button>
+          <button onClick={handleLogout} className="dropdown-item">Log Out</button>
         </div>
       </div>
     </div>
