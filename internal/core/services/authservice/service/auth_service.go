@@ -1,14 +1,28 @@
-package services
+package service
 
 import (
-	"DMP2S/internal/infrastructure/supabaseclient"
+	"DMP2S/internal/core/services/authservice/supabaseclient"
 	"context"
 	"errors"
 
 	"github.com/nedpals/supabase-go"
 )
 
-func RegisterUser(email string, password string, name string, roleID uint) (*supabase.User, error) {
+type AuthenticatedUser struct {
+	UserID   string `json:"user_id"`
+	UserName string `json:"name"`
+	Token    string `json:"token"`
+}
+
+type AuthService struct{}
+
+// NewAuthService returns a new instance of AuthService.
+func NewAuthService() *AuthService {
+	return &AuthService{}
+}
+
+// func (s *AuthService) Login(email, password string) (*AuthenticatedUser, error)
+func (s *AuthService) Register(email string, password string, name string, roleID uint) (*supabase.User, error) {
 	supabaseClient := supabaseclient.InitSupabaseClient()
 
 	ctx := context.Background()
@@ -23,11 +37,6 @@ func RegisterUser(email string, password string, name string, roleID uint) (*sup
 		},
 	}
 	user, err := supabaseClient.Auth.SignUp(ctx, signUpData)
-	// Use map instead of struct for Data
-	// user, err := supabaseClient.Auth.SignUp(context.Background(), supabase.UserCredentials{
-	// 	Email:    email,
-	// 	Password: password,
-	// })
 
 	if err != nil {
 		return nil, errors.New("registration failed...: " + err.Error())
@@ -36,15 +45,10 @@ func RegisterUser(email string, password string, name string, roleID uint) (*sup
 	return user, nil
 }
 
-type AuthenticatedUser struct {
-	UserID   string `json:"user_id"`
-	UserName string `json:"name"`
-	Token    string `json:"token"`
-}
-
-// LoginUser handles user login
-func LoginUser(email, password string) (*AuthenticatedUser, error) {
+// Login authenticates a user through Supabase.
+func (s *AuthService) Login(email, password string) (*AuthenticatedUser, error) {
 	supabaseClient := supabaseclient.InitSupabaseClient()
+
 	user, err := supabaseClient.Auth.SignIn(context.Background(), supabase.UserCredentials{
 		Email:    email,
 		Password: password,
