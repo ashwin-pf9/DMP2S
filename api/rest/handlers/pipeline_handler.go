@@ -1,245 +1,245 @@
 package handlers
 
-import (
-	"DMP2S/internal/core/domain"
-	"DMP2S/internal/core/services"
-	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"strings"
+// import (
+// 	"DMP2S/internal/core/domain"
+// 	"DMP2S/internal/core/services"
+// 	"context"
+// 	"encoding/json"
+// 	"errors"
+// 	"fmt"
+// 	"log"
+// 	"net/http"
+// 	"os"
+// 	"strings"
 
-	"github.com/google/uuid"
-	"github.com/gorilla/mux"
-	"github.com/nedpals/supabase-go"
-)
+// 	"github.com/google/uuid"
+// 	"github.com/gorilla/mux"
+// 	"github.com/nedpals/supabase-go"
+// )
 
-//HANDLERS SHOULD FOLLOW GIVEN SIGNATURE
-//func FunctionName(w http.ResponseWriter, r *http.Request)
+// //HANDLERS SHOULD FOLLOW GIVEN SIGNATURE
+// //func FunctionName(w http.ResponseWriter, r *http.Request)
 
-/* CODE WRITTEN BY ME, MIGHT BE WRONG */
+// /* CODE WRITTEN BY ME, MIGHT BE WRONG */
 
-// Purpose: Should extract data from request data such as:
-// jwt token to check if user is authenticated to access these pipelines or not
-// user id
-// user name?
-// ...
-func authenticateRequest(w http.ResponseWriter, r *http.Request) (*supabase.User, error) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
-		return nil, errors.New("missing authorization token")
-	}
+// // Purpose: Should extract data from request data such as:
+// // jwt token to check if user is authenticated to access these pipelines or not
+// // user id
+// // user name?
+// // ...
+// func authenticateRequest(w http.ResponseWriter, r *http.Request) (*supabase.User, error) {
+// 	authHeader := r.Header.Get("Authorization")
+// 	if authHeader == "" {
+// 		http.Error(w, "Unauthorized: Missing token", http.StatusUnauthorized)
+// 		return nil, errors.New("missing authorization token")
+// 	}
 
-	token := strings.TrimPrefix(authHeader, "Bearer ")
+// 	token := strings.TrimPrefix(authHeader, "Bearer ")
 
-	url := os.Getenv("SUPABASE_URL")
-	key := os.Getenv("ANON_KEY") //anon_key because it is a client side request
+// 	url := os.Getenv("SUPABASE_URL")
+// 	key := os.Getenv("ANON_KEY") //anon_key because it is a client side request
 
-	// Validate Token with Supabase
-	client := supabase.CreateClient(url, key)
-	user, err := client.Auth.User(context.TODO(), token)
-	if err != nil {
-		http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
-		return nil, errors.New("Invalid authorization token")
-	}
-	return user, nil
-}
+// 	// Validate Token with Supabase
+// 	client := supabase.CreateClient(url, key)
+// 	user, err := client.Auth.User(context.TODO(), token)
+// 	if err != nil {
+// 		http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
+// 		return nil, errors.New("Invalid authorization token")
+// 	}
+// 	return user, nil
+// }
 
-func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be called on clients request
-	//REQUEST AUTHENTICATION
-	user, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Will be called on clients request
+// 	//REQUEST AUTHENTICATION
+// 	user, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	// Call actual function to get user pipelines
-	pipelines := services.GetUsersPipelines(user.ID)
+// 	// Call actual function to get user pipelines
+// 	pipelines := services.GetUsersPipelines(user.ID)
 
-	// Send Response
-	json.NewEncoder(w).Encode(pipelines)
-}
+// 	// Send Response
+// 	json.NewEncoder(w).Encode(pipelines)
+// }
 
-func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
-	//REQUEST AUTHENTICATION
-	user, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
+// 	//REQUEST AUTHENTICATION
+// 	user, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	// Parse request body to get pipeline name
-	var req struct {
-		Name string `json:"name"`
-	}
-	err = json.NewDecoder(r.Body).Decode(&req)
-	if err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
+// 	// Parse request body to get pipeline name
+// 	var req struct {
+// 		Name string `json:"name"`
+// 	}
+// 	err = json.NewDecoder(r.Body).Decode(&req)
+// 	if err != nil {
+// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+// 		return
+// 	}
 
-	// Call service function to create pipeline
-	pipeline, err := services.CreatePipeline(user.ID, req.Name)
-	if err != nil {
-		http.Error(w, "Failed to create pipeline", http.StatusInternalServerError)
-		return
-	}
+// 	// Call service function to create pipeline
+// 	pipeline, err := services.CreatePipeline(user.ID, req.Name)
+// 	if err != nil {
+// 		http.Error(w, "Failed to create pipeline", http.StatusInternalServerError)
+// 		return
+// 	}
 
-	// Send response
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(pipeline)
-}
+// 	// Send response
+// 	w.WriteHeader(http.StatusCreated)
+// 	json.NewEncoder(w).Encode(pipeline)
+// }
 
-func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
-	//REQUEST AUTHENTICATION
-	_, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
+// 	//REQUEST AUTHENTICATION
+// 	_, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	//Fetching "pipeline_id" from request URL
-	vars := mux.Vars(r)
-	pipelineID, err := uuid.Parse(vars["pipeline_id"])
-	if err != nil {
-		log.Printf("Invalid pipeline ID: %v", err)
-		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
-		return
-	}
+// 	//Fetching "pipeline_id" from request URL
+// 	vars := mux.Vars(r)
+// 	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+// 	if err != nil {
+// 		log.Printf("Invalid pipeline ID: %v", err)
+// 		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+// 		return
+// 	}
 
-	stages := services.GetPipelineStages(pipelineID)
+// 	stages := services.GetPipelineStages(pipelineID)
 
-	//Now i want to write this stages array to the response socket - for that i need to conver to json type
-	json.NewEncoder(w).Encode(stages)
-}
+// 	//Now i want to write this stages array to the response socket - for that i need to conver to json type
+// 	json.NewEncoder(w).Encode(stages)
+// }
 
-// ------------------------------------------------------------- //
-// API handler
+// // ------------------------------------------------------------- //
+// // API handler
 
-// CREATING IMPLEMENTATION OBJECT WHICH IMPLEMENTS ALL INTERFACE METHODS
-var impl = services.NewPipelineOrchestratorImpl()
+// // CREATING IMPLEMENTATION OBJECT WHICH IMPLEMENTS ALL INTERFACE METHODS
+// var impl = services.NewPipelineOrchestratorImpl()
 
-// CREATING CONNECTION WITH THE IMPLEMENTATION THROUGH INTERFACE
-var orchestrator = services.NewPipelineOrchestratorService(impl) //PLUGGING IMPLEMENTATION TO THE ORCHESTRATOR
+// // CREATING CONNECTION WITH THE IMPLEMENTATION THROUGH INTERFACE
+// var orchestrator = services.NewPipelineOrchestratorService(impl) //PLUGGING IMPLEMENTATION TO THE ORCHESTRATOR
 
-func AddStageHandler(w http.ResponseWriter, r *http.Request) {
-	//REQUEST AUTHENTICATION
-	_, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// func AddStageHandler(w http.ResponseWriter, r *http.Request) {
+// 	//REQUEST AUTHENTICATION
+// 	_, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	var stage domain.Stage
-	if err := json.NewDecoder(r.Body).Decode(&stage); err != nil {
-		http.Error(w, `{"error": "Invalid request"}`, http.StatusBadRequest)
-		return
-	}
+// 	var stage domain.Stage
+// 	if err := json.NewDecoder(r.Body).Decode(&stage); err != nil {
+// 		http.Error(w, `{"error": "Invalid request"}`, http.StatusBadRequest)
+// 		return
+// 	}
 
-	err = orchestrator.AddStageToPipeline(stage)
-	if err != nil {
-		http.Error(w, `{"error": "Failed to add stage"}`, http.StatusInternalServerError)
-		return
-	}
+// 	err = orchestrator.AddStageToPipeline(stage)
+// 	if err != nil {
+// 		http.Error(w, `{"error": "Failed to add stage"}`, http.StatusInternalServerError)
+// 		return
+// 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Stage added successfully"})
-}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(map[string]string{"message": "Stage added successfully"})
+// }
 
-// API: Execute Pipeline
-func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
-	//REQUEST AUTHENTICATION
-	_, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// // API: Execute Pipeline
+// func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
+// 	//REQUEST AUTHENTICATION
+// 	_, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	ctx := context.Background()
-	//Extracting "pipeline_id" from request URL
-	vars := mux.Vars(r)
-	pipelineID, err := uuid.Parse(vars["pipeline_id"])
-	if err != nil {
-		log.Printf("Invalid pipeline ID: %v", err)
-		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
-		return
-	}
+// 	ctx := context.Background()
+// 	//Extracting "pipeline_id" from request URL
+// 	vars := mux.Vars(r)
+// 	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+// 	if err != nil {
+// 		log.Printf("Invalid pipeline ID: %v", err)
+// 		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+// 		return
+// 	}
 
-	result, err := orchestrator.ExecutePipeline(ctx, pipelineID)
-	if err != nil {
-		errString := fmt.Sprintf("Execution failed : %v", err)
-		http.Error(w, errString, http.StatusInternalServerError)
-		return
-	}
+// 	result, err := orchestrator.ExecutePipeline(ctx, pipelineID)
+// 	if err != nil {
+// 		errString := fmt.Sprintf("Execution failed : %v", err)
+// 		http.Error(w, errString, http.StatusInternalServerError)
+// 		return
+// 	}
 
-	json.NewEncoder(w).Encode(result)
-}
+// 	json.NewEncoder(w).Encode(result)
+// }
 
-func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
-	//REQUEST AUTHENTICATION
-	_, err := authenticateRequest(w, r)
-	if err != nil {
-		log.Printf("Error while authenticating user : %v", err)
+// func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
+// 	//REQUEST AUTHENTICATION
+// 	_, err := authenticateRequest(w, r)
+// 	if err != nil {
+// 		log.Printf("Error while authenticating user : %v", err)
 
-		// Send JSON error response
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
-		return // Exit early to prevent nil pointer dereference
-	}
-	//REQUEST AUTHENTICATION DONE
+// 		// Send JSON error response
+// 		w.Header().Set("Content-Type", "application/json")
+// 		w.WriteHeader(http.StatusUnauthorized)
+// 		json.NewEncoder(w).Encode(map[string]string{"error": "Unauthorized access"})
+// 		return // Exit early to prevent nil pointer dereference
+// 	}
+// 	//REQUEST AUTHENTICATION DONE
 
-	//Extracting "pipeline_id" from request URL
-	vars := mux.Vars(r)
-	pipelineID, err := uuid.Parse(vars["pipeline_id"])
-	if err != nil {
-		log.Printf("Invalid pipeline ID: %v", err)
-		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
-		return
-	}
+// 	//Extracting "pipeline_id" from request URL
+// 	vars := mux.Vars(r)
+// 	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+// 	if err != nil {
+// 		log.Printf("Invalid pipeline ID: %v", err)
+// 		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
+// 		return
+// 	}
 
-	err = orchestrator.DeletePipeline(pipelineID)
-	if err != nil {
-		errString := fmt.Sprintf("Deletion failed : %v", err)
-		http.Error(w, errString, http.StatusInternalServerError)
-		return
-	}
+// 	err = orchestrator.DeletePipeline(pipelineID)
+// 	if err != nil {
+// 		errString := fmt.Sprintf("Deletion failed : %v", err)
+// 		http.Error(w, errString, http.StatusInternalServerError)
+// 		return
+// 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Pipeline deleted successfully"})
-}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(map[string]string{"message": "Pipeline deleted successfully"})
+// }

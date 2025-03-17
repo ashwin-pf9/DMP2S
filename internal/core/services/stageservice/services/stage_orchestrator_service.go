@@ -1,11 +1,12 @@
 package services
 
 import (
-	"DMP2S/internal/core/domain"
-	"DMP2S/internal/core/ports"
-	"DMP2S/internal/infrastructure/db"
 	"context"
-	"errors"
+	"log"
+	stagepb "stageservice/proto"
+	"stageservice/shared/db"
+	"stageservice/shared/domain"
+	"stageservice/shared/ports"
 	"time"
 
 	"github.com/google/uuid"
@@ -13,6 +14,7 @@ import (
 
 // BuildStage implements Stage interface
 type StageOrchestratorService struct {
+	stagepb.UnimplementedStageServiceServer
 	stage ports.Stage
 }
 
@@ -28,15 +30,28 @@ func (b *StageOrchestratorService) GetStageID() uuid.UUID {
 }
 
 // Execute runs the build stage logic
-func (b *StageOrchestratorService) ExecuteStage(ctx context.Context, input interface{}) (interface{}, error) {
-	//Extracting executionID from context
-	executionID, ok := ctx.Value("executionID").(uuid.UUID)
-	if !ok {
-		return nil, errors.New("executionID not found in context")
+func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagepb.ExecuteStageRequest) (*stagepb.ExecuteStageResponse, error) {
+	log.Printf("stage_orch_service - ExecuteStage called\n")
+	executionID, err := uuid.Parse(req.ExecutionId)
+	log.Printf("stage_orch_service - ExecutionID : %s\n", executionID)
+	if err != nil {
+		return &stagepb.ExecuteStageResponse{
+			Result:       "",
+			ErrorMessage: "Invalid execution_id",
+		}, nil
 	}
 
-	// Simulated execution logic
-	stage := input.(domain.Stage)
+	// Convert proto Stage to domain.Stage
+	stageUUID, err := uuid.Parse(req.Stage.Id)
+	if err != nil {
+		return &stagepb.ExecuteStageResponse{
+			ErrorMessage: "Invalid stage ID",
+		}, nil
+	}
+	stage := domain.Stage{
+		ID:   stageUUID,
+		Name: req.Stage.Name,
+	}
 	startTime := time.Now()
 
 	stageExecution := domain.StageExecution{
@@ -49,7 +64,7 @@ func (b *StageOrchestratorService) ExecuteStage(ctx context.Context, input inter
 		ErrorMessage: "no error",
 	}
 
-	_, err := b.stage.Execute(ctx, input)
+	_, err = s.stage.Execute(ctx, stage)
 	if err != nil {
 		endTime := time.Now()
 		stageExecution.Status = string(domain.Failed)
@@ -57,9 +72,11 @@ func (b *StageOrchestratorService) ExecuteStage(ctx context.Context, input inter
 		stageExecution.EndedAt = &endTime
 
 		db.DB.Save(&stageExecution)
-		return nil, err
+		return &stagepb.ExecuteStageResponse{
+			Result:       "",
+			ErrorMessage: "Failed to execute stage",
+		}, nil
 	}
-
 	// Mark execution as completed
 	stageExecution.Status = string(domain.Completed)
 	endTime := time.Now()
@@ -67,7 +84,10 @@ func (b *StageOrchestratorService) ExecuteStage(ctx context.Context, input inter
 
 	db.DB.Save(&stageExecution)
 
-	return "Build completed", nil
+	return &stagepb.ExecuteStageResponse{
+		Result:       "Build completed",
+		ErrorMessage: "",
+	}, nil
 }
 
 // HandleError handles any errors during execution

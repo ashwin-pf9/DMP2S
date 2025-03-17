@@ -1,9 +1,9 @@
 package services
 
 import (
-	"DMP2S/internal/core/domain"
 	"context"
 	"log"
+	"stageservice/shared/domain"
 	"time"
 
 	"github.com/google/uuid"

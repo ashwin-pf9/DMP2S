@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package stagepb;
+
+option go_package = "./;stagepb";
+
+service StageService {
+  rpc ExecuteStage(ExecuteStageRequest) returns (ExecuteStageResponse);
+}
+
+message Stage {
+  string id = 1;
+  string name = 2;
+  string pipeline_id = 3; 
+}
+
+message ExecuteStageRequest {
+  Stage stage = 2;
+}
+
+
+message ExecuteStageResponse {
+  string result = 1;
+  string error_message = 2;  // If empty, success
+}
+
+/* protoc --proto_path=internal/core/services/authservice/proto \
+--go_out=internal/core/services/authservice/proto \
+--go-grpc_out=internal/core/services/authservice/proto \
+--go_opt=paths=source_relative \
+--go-grpc_opt=paths=source_relative \
+internal/core/services/authservice/proto/auth.proto */

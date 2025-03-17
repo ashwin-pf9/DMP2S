@@ -1,7 +1,6 @@
 package main
 
 import (
-	"DMP2S/internal/infrastructure/db"
 	"fmt"
 	"log"
 
@@ -13,7 +12,7 @@ func main() {
 
 	// Initialize database and run migrations
 	fmt.Println("Running database migrations...")
-	db.InitDatabase() // Running auto migrations - .env LOADED
+	// db.InitDatabase() // Running auto migrations - .env LOADED
 
 	// Call the server setup function
 	err := rest.StartRESTServer()

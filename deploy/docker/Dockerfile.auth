@@ -1,0 +1,30 @@
+# Start from Go image
+FROM golang:1.22-alpine AS builder
+
+# Set working directory in container
+WORKDIR /app
+
+# Copy authservice's go.mod and go.sum
+COPY internal/core/services/authservice/go.mod internal/core/services/authservice/go.sum ./
+
+# Download dependencies for authservice
+RUN go mod download
+
+# Copy only authservice code (including generated proto files)
+COPY internal/core/services/authservice ./authservice
+
+# Build authservice
+WORKDIR /app/authservice
+RUN go build -o authservice ./server.go
+
+# Final image
+FROM alpine:latest
+
+# Set working dir in final container
+WORKDIR /root/
+
+# Copy binary from builder
+COPY --from=builder /app/authservice/authservice .
+
+# Command to run
+CMD ["./authservice"]

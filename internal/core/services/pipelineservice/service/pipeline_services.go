@@ -1,8 +1,8 @@
-package services
+package service
 
 import (
-	"DMP2S/internal/core/domain"
-	"DMP2S/internal/infrastructure/db"
+	"pipelineservice/shared/db"
+	"pipelineservice/shared/domain"
 
 	"github.com/google/uuid"
 )

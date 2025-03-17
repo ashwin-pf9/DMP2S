@@ -1,21 +1,23 @@
-package services
+package service
 
 import (
-	"DMP2S/internal/core/domain"
-	"DMP2S/internal/core/events"
 	"context"
 	"errors"
 	"log"
+	"pipelineservice/events"
+	"pipelineservice/shared/domain"
+	"pipelineservice/stagepb"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type PipelineOrchestratorImpl struct {
+	stageClient stagepb.StageServiceClient
 }
 
-func NewPipelineOrchestratorImpl() *PipelineOrchestratorImpl {
-	return &PipelineOrchestratorImpl{}
+func NewPipelineOrchestratorImpl(client stagepb.StageServiceClient) *PipelineOrchestratorImpl {
+	return &PipelineOrchestratorImpl{stageClient: client}
 }
 
 func (imp *PipelineOrchestratorImpl) AddStage(stage domain.Stage) error {
@@ -44,27 +46,41 @@ func (imp *PipelineOrchestratorImpl) Execute(ctx context.Context, input interfac
 
 	// Iterate through each domain.Stage and wrap it into StageOrchestratorService
 	for _, stage := range stageList {
-		// Create StageOrchestratorService for each stage
-		stageImpl := NewStageOrchestratorImpl()                 // Actual implementation
-		stageService := NewStageOrchestratorService(&stageImpl) // Service layer
+		// // Create StageOrchestratorService for each stage
+		// stageImpl := NewStageOrchestratorImpl()                 // Actual implementation
+		// stageService := NewStageOrchestratorService(&stageImpl) // Service layer
 
 		// Call methods on the service layer
 		log.Printf("Executing stage: %s", stage.Name)
 		// Broadcast that the stage has started
 		events.SendUpdate(stage.ID.String(), "Running")
 
-		// Execute stage
-		result, err := stageService.ExecuteStage(ctx, stage)
+
+		executionIDValue := ctx.Value("executionID")
+
+		executionID, ok := executionIDValue.(uuid.UUID)
+		if !ok {
+			return nil, errors.New("executionID not found or invalid type in context")
+		}
+
+		req := &stagepb.ExecuteStageRequest{
+			Stage: &stagepb.Stage{
+				Id:         stage.ID.String(),
+				Name:       stage.Name,
+				PipelineId: stage.PipelineID.String(),
+			},
+			ExecutionId: executionID.String(), // Now it's valid
+		}
+
+		// Call gRPC method on stage service
+		res, err := imp.stageClient.ExecuteStage(ctx, req)
 		if err != nil {
 			log.Printf("Stage %s failed: %v", stage.Name, err)
-			// Broadcast failure status
 			events.SendUpdate(stage.ID.String(), "Failed")
-
-			stageService.HandleError(ctx, err)
 			return nil, err
 		}
 
-		log.Printf("Stage %s succeeded: %v\n", stage.Name, result)
+		log.Printf("Stage %s succeeded: %v\n", stage.Name, res)
 		// Broadcast success status
 		events.SendUpdate(stage.ID.String(), "Completed")
 

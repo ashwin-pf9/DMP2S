@@ -1,7 +1,7 @@
 package service
 
 import (
-	"DMP2S/internal/protobuffs/authpb"
+	authpb "authservice/proto"
 	"context"
 )
 

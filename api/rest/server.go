@@ -1,4 +1,4 @@
-package rest
+package main
 
 import (
 	"fmt"
@@ -10,7 +10,12 @@ import (
 	"github.com/rs/cors"
 )
 
+func main() {
+	StartRESTServer()
+}
+
 // StartServer initializes and starts the HTTP server
+// func StartRESTServer() error {
 func StartRESTServer() error {
 	//Better than mux.NewRouter(), gives more control, supports dynamic routes
 	router := mux.NewRouter()
@@ -26,24 +31,24 @@ func StartRESTServer() error {
 	/*
 		To make following request the Client must have a valid json object of type user "*supabase.User"
 	*/
-	router.HandleFunc("/pipelines", handlers.GetPipelinesHandler).Methods("GET")           //maps /pipelines endpoint to path handlers.GetPipelinesHandler
+	// router.HandleFunc("/pipelines", handlers.GetPipelinesHandler).Methods("GET")           //maps /pipelines endpoint to path handlers.GetPipelinesHandler
 	router.HandleFunc("/pipelines/create", handlers.CreatePipelineHandler).Methods("POST") //maps /pipelines/create endpoint to path handlers.CreatePipelinesHandler
 
 	/*
 		To make user first need to login and create pipeline, then from that pipeline(card on UI) option for creating state will be provided
 	*/
 
-	router.HandleFunc("/pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
-	router.HandleFunc("/pipelines/{pipeline_id}/stages/add", handlers.AddStageHandler).Methods("POST")
+	// router.HandleFunc("/pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
+	// router.HandleFunc("/pipelines/{pipeline_id}/stages/add", handlers.AddStageHandler).Methods("POST")
 
 	/*
 		Now that stages are added to the pipeline : user can call on these endpoints for further operation
 	*/
 	router.HandleFunc("/pipelines/{pipeline_id}/start", handlers.ExecutePipelineHandler).Methods("POST")
-	router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
+	// router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
 
 	/*--  Endpoint for WEB SOCKET --*/
-	router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
+	// router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
 
 	// // Serve React frontend (static files)
 	// staticDir := "../../web/frontend/build"

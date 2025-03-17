@@ -1,10 +1,10 @@
 package db
 
 import (
-	"DMP2S/internal/core/domain"
 	"fmt"
 	"log"
 	"os"
+	"pipelineservice/shared/domain"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -56,8 +56,11 @@ func InitDatabase() {
 
 	//-------------
 
+	// cwd, _ := os.Getwd()
+	// fmt.Println("Current working directory:", cwd)
+
 	// Read the SQL file
-	sqlFile := "/Users/ashwintirpude/DMP2S/internal/infrastructure/db/public.user.sql"
+	sqlFile := "/Users/ashwintirpude/DMP2S/internal/core/services/pipelineservice/shared/db/public.user.sql"
 	content, err := os.ReadFile(sqlFile)
 	if err != nil {
 		log.Fatalf("Failed to read SQL file: %v", err)

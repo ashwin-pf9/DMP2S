@@ -1,8 +1,8 @@
 package main
 
 import (
-	"DMP2S/internal/core/services/authservice/service"
-	"DMP2S/internal/protobuffs/authpb"
+	authpb "authservice/proto"
+	"authservice/service"
 	"log"
 	"net"
 

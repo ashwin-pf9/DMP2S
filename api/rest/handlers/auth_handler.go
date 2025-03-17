@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"DMP2S/internal/protobuffs/authpb"
+	authpb "DMP2S/internal/protobuffs/auth"
 	"context"
 	"encoding/json"
 	"log"

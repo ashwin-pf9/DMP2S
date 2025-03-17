@@ -3,8 +3,8 @@
 package ports
 
 import (
-	"DMP2S/internal/core/domain"
 	"context"
+	"shared/domain"
 
 	"github.com/google/uuid"
 )

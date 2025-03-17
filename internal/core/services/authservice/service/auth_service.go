@@ -1,7 +1,7 @@
 package service
 
 import (
-	"DMP2S/internal/core/services/authservice/supabaseclient"
+	"authservice/supabaseclient"
 	"context"
 	"errors"
 
