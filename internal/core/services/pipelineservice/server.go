@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/events"
 	pipelinepb "github.com/ashwin-pf9/DMP2S/services/pipelineservice/proto"
 	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/service"
 	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
@@ -14,6 +15,8 @@ import (
 
 func main() {
 	db.InitDatabase()
+	events.InitNATS() // For publishing
+
 	// Connect to StageService running at stage-service:50052
 	conn, err := grpc.Dial("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

@@ -8,6 +8,8 @@ import (
 	"time"
 
 	crudpipelinepb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/crud"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 )
 
@@ -46,7 +48,7 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Second)
 	defer cancel()
 
 	InitCRUDClient()
@@ -68,7 +70,7 @@ func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
 
 // ----------- GetUserPipelinesHandler -----------
 
-func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) {
+func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Working
 	if r.Method != http.MethodPost {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
@@ -109,24 +111,17 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) {
 
 // ----------- GetPipelineStagesHandler -----------
 
-func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
-
+func GetStagesHandler(w http.ResponseWriter, r *http.Request) { //Working
 	if r.Method != http.MethodGet {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	var req struct {
-		PipelineID string `json:"pipeline_id"`
-	}
-
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
-		return
-	}
-
-	if req.PipelineID == "" {
-		http.Error(w, "pipeline_id is required", http.StatusBadRequest)
+	vars := mux.Vars(r)
+	pipelineID, err := uuid.Parse(vars["pipeline_id"])
+	if err != nil {
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
 		return
 	}
 
@@ -136,17 +131,22 @@ func GetStagesHandler(w http.ResponseWriter, r *http.Request) {
 	InitCRUDClient()
 
 	resp, err := crudClient.GetPipelineStages(ctx, &crudpipelinepb.GetPipelineStagesRequest{
-		PipelineId: req.PipelineID,
+		PipelineId: pipelineID.String(),
 	})
 	if err != nil {
 		http.Error(w, "Failed to fetch pipeline stages: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	log.Printf("Fetched %d stages for pipeline %s", len(resp.Stages), req.PipelineID)
+	log.Printf("Fetched %d stages for pipeline %s", len(resp.Stages), pipelineID)
+
+	stages := resp.Stages
+	if stages == nil {
+		stages = []*crudpipelinepb.Stage{}
+	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(resp.Stages); err != nil {
+	if err := json.NewEncoder(w).Encode(stages); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }

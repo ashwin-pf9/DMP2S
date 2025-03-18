@@ -37,14 +37,16 @@ func (s *PipelineService) CreatePipeline(userID string, name string) (*domain.Pi
 	return pipeline, nil
 }
 
-func (s *PipelineService) GetUsersPipelines(userID string) []domain.Pipeline {
+func (s *PipelineService) GetUsersPipelines(userID string) ([]domain.Pipeline, error) {
 
 	DB := db.InitDatabase()
 
 	var pipelines []domain.Pipeline
-	//db.DB - Using this global DB instance to communicate with database
-	DB.Where("user_id = ?", userID).Find(&pipelines)
-	return pipelines
+	result := DB.Where("user_id = ?", userID).Find(&pipelines)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return pipelines, nil
 }
 
 func (s *PipelineService) GetPipelineStages(pipelineID uuid.UUID) []domain.Stage {

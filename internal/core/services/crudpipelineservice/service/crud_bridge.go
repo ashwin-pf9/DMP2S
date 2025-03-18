@@ -40,7 +40,11 @@ func (s *PipelineServer) CreatePipeline(ctx context.Context, req *crudpipelinepb
 
 func (s *PipelineServer) GetUserPipelines(ctx context.Context, req *crudpipelinepb.GetUserPipelinesRequest) (*crudpipelinepb.PipelinesResponse, error) {
 	userID := req.GetUserId()
-	pipelines := s.pipelineService.GetUsersPipelines(userID)
+	pipelines, err := s.pipelineService.GetUsersPipelines(userID)
+	if err != nil {
+		log.Printf("failed to fetch pipelines\n")
+		return nil, status.Errorf(codes.Internal, "failed to fetch pipelines: %v", err)
+	}
 
 	var protoPipelines []*crudpipelinepb.Pipeline
 	for _, p := range pipelines {

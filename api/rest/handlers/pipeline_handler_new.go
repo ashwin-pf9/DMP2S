@@ -9,6 +9,8 @@ import (
 	"time"
 
 	pb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/pipeline"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
 )
 
@@ -67,19 +69,11 @@ func InitPipelineServer() {
 
 func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 
-	var req struct {
-		PipelineID string `json:"pipeline_id"`
-	}
-	// Decode JSON request body
-	err := json.NewDecoder(r.Body).Decode(&req)
+	vars := mux.Vars(r)
+	pipelineID, err := uuid.Parse(vars["pipeline_id"])
 	if err != nil {
-		http.Error(w, "Invalid request payload: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Validate pipeline_id
-	if req.PipelineID == "" {
-		http.Error(w, "pipeline_id is required", http.StatusBadRequest)
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
 		return
 	}
 
@@ -91,7 +85,7 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("from new_handler - calling pipelineServer.ExecutePipeline\n") //--for debugging
 
 	resp, err := pipelineServer.ExecutePipeline(ctx, &pb.ExecutePipelineRequest{
-		PipelineId: req.PipelineID,
+		PipelineId: pipelineID.String(),
 	})
 	if err != nil {
 		error := fmt.Sprintf("Pipeline creation failed : %v", err.Error())
@@ -154,20 +148,11 @@ func AddStageHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
-
-	var req struct {
-		PipelineID string `json:"pipeline_id"`
-	}
-	// Decode JSON request body
-	err := json.NewDecoder(r.Body).Decode(&req)
+	vars := mux.Vars(r)
+	pipelineID, err := uuid.Parse(vars["pipeline_id"])
 	if err != nil {
-		http.Error(w, "Invalid request payload: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// Validate pipeline_id
-	if req.PipelineID == "" {
-		http.Error(w, "pipeline_id is required", http.StatusBadRequest)
+		log.Printf("Invalid pipeline ID: %v", err)
+		http.Error(w, "Invalid pipeline ID", http.StatusBadRequest)
 		return
 	}
 
@@ -179,7 +164,7 @@ func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	log.Printf("from delete_handler - calling pipelineServer.DeletePipeline\n") //--for debugging
 
 	_, err = pipelineServer.DeletePipeline(ctx, &pb.PipelineIDRequest{
-		PipelineId: req.PipelineID,
+		PipelineId: pipelineID.String(),
 	})
 	if err != nil {
 		error := fmt.Sprintf("Delete pipeline failed: %v", err.Error())

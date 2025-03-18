@@ -87,7 +87,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <PipelineList pipelines={pipelines} onSelect={handlePipelineClick} />
       </div>
-    </div>
+      </div>
   );
 };
 

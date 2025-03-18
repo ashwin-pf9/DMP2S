@@ -73,13 +73,18 @@ export const fetchStages = async (pipelineId) => {
 
 export const createPipeline = async (pipelineName) => {
   try {
+    //Asserting that fetchPipelines is already being called and user_id is stored in the localStorage
+    const userId = localStorage.getItem("user_id");
+    if (!userId) {
+      throw new Error("User ID not found in localStorage");
+    }
     const response = await fetch(`${API_BASE_URL}/pipelines/create`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${getAuthToken()}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name: pipelineName }),
+      body: JSON.stringify({ name: pipelineName, user_id: userId }),
     });
 
     if (!response.ok) {

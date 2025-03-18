@@ -44,7 +44,8 @@ func StartRESTServer() error {
 	router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
 
 	/*--  Endpoint for WEB SOCKET --*/
-	// router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
+	handlers.InitNATSSubscriber() // For subscribing
+	router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)
 
 	// // Serve React frontend (static files)
 	// staticDir := "../../web/frontend/build"
