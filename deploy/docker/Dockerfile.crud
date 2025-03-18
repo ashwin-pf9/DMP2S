@@ -1,0 +1,32 @@
+# Stage 1: Build the binary
+FROM golang:latest AS builder
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy module files and download dependencies
+COPY internal/core/services/crudpipelineservice/go.mod internal/core/services/crudpipelineservice/go.sum ./
+RUN go mod download
+
+# Copy the entire rest package
+COPY internal/core/services/crudpipelineservice ./crudpipelineservice
+
+# Move into the rest package directory
+WORKDIR /app/crudpipelineservice
+
+# Build a statically-linked Linux binary
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./server.go
+
+# Stage 2: Create minimal final image
+FROM alpine:latest
+
+# Install ca-certificates (required for HTTPS connections)
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copy the binary from builder
+COPY --from=builder /app/crudpipelineservice/server .
+
+# Run the server
+CMD ["./server"]

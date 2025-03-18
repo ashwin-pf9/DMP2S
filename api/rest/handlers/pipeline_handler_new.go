@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	pb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/pipeline"
+	pb "github.com/ashwin-pf9/DMP2S/api/rest/protobuffs/pipeline"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
@@ -18,7 +18,7 @@ var pipelineClient pb.PipelineServiceClient
 var pipelineServer pb.PipelineOrchestratorServiceClient
 
 func InitPipelineClient() {
-	conn, err := grpc.Dial("localhost:50053", grpc.WithInsecure())
+	conn, err := grpc.Dial("pipelineservice-service:50053", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}

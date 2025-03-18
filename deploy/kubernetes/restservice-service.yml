@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: restservice-service
+spec:
+  selector:
+    app: restservice
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080  # Choose between 30000-32767
+  type: NodePort

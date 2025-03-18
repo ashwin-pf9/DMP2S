@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	crudpipelinepb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/crud"
+	crudpipelinepb "github.com/ashwin-pf9/DMP2S/api/rest/protobuffs/crud"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"google.golang.org/grpc"
@@ -18,7 +18,7 @@ var crudClient crudpipelinepb.PipelineServiceClient
 
 // Initialize gRPC client (Call this in main.go)
 func InitCRUDClient() {
-	conn, err := grpc.Dial("localhost:50054", grpc.WithInsecure()) // Adjust port if needed
+	conn, err := grpc.Dial("crudservice-service:50054", grpc.WithInsecure()) // Adjust port if needed
 	if err != nil {
 		log.Fatalf("Failed to connect to CRUD gRPC server: %v", err)
 	}

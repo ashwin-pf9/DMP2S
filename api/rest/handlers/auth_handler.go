@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	authpb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/auth"
+	authpb "github.com/ashwin-pf9/DMP2S/api/rest/protobuffs/auth"
 	"google.golang.org/grpc"
 )
 
@@ -24,7 +24,7 @@ var authClient authpb.AuthServiceClient
 // Initialize gRPC client (Call this in main.go)
 func InitAuthClient() {
 	// Establish a connection to the gRPC server
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("authservice-service:50051", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restservice
+  template:
+    metadata:
+      labels:
+        app: restservice
+    spec:
+      containers:
+      - name: restservice
+        image: ashwin0711/restservice:v1
+        ports:
+        - containerPort: 8080
+        env:
+        - name: NATS_URL
+          value: "nats://nats-service:4222"  # <-- NATS K8s Service

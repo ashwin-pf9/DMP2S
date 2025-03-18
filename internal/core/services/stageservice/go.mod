@@ -3,7 +3,7 @@ module github.com/ashwin-pf9/DMP2S/services/stageservice
 go 1.23.6
 
 require (
-	github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee
+	github.com/ashwin-pf9/shared v0.0.3
 	github.com/google/uuid v1.6.0
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5

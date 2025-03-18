@@ -1,5 +1,9 @@
 github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee h1:P4utRXRaH0ubW43qYec0XP24H/iSmBAPTcCGhrZAtfg=
 github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee/go.mod h1:ZNt0YXO6h++EuHzZD4WXFGOPmtiIWUOfvLcXXCLb3bk=
+github.com/ashwin-pf9/shared v0.0.2 h1:DJMCNGLCy+J3AwfIc2BNWg+pOKVMDuAhJ6tyRQV3mBY=
+github.com/ashwin-pf9/shared v0.0.2/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
+github.com/ashwin-pf9/shared v0.0.3 h1:A4KescrQ24DOqU5+5vS2DvqW+1ACz015kKe73r2r6sU=
+github.com/ashwin-pf9/shared v0.0.3/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
