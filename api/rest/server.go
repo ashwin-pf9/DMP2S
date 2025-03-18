@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"DMP2S/api/rest/handlers" // Import handlers
-
+	"github.com/ashwin-pf9/DMP2S/api/rest/handlers"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -31,21 +30,18 @@ func StartRESTServer() error {
 	/*
 		To make following request the Client must have a valid json object of type user "*supabase.User"
 	*/
-	// router.HandleFunc("/pipelines", handlers.GetPipelinesHandler).Methods("GET")           //maps /pipelines endpoint to path handlers.GetPipelinesHandler
+	router.HandleFunc("/pipelines", handlers.GetPipelinesHandler).Methods("POST")          //maps /pipelines endpoint to path handlers.GetPipelinesHandler
 	router.HandleFunc("/pipelines/create", handlers.CreatePipelineHandler).Methods("POST") //maps /pipelines/create endpoint to path handlers.CreatePipelinesHandler
+	router.HandleFunc("/pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
 
 	/*
 		To make user first need to login and create pipeline, then from that pipeline(card on UI) option for creating state will be provided
-	*/
-
-	// router.HandleFunc("/pipelines/{pipeline_id}/stages", handlers.GetStagesHandler).Methods("GET")
-	// router.HandleFunc("/pipelines/{pipeline_id}/stages/add", handlers.AddStageHandler).Methods("POST")
-
-	/*
 		Now that stages are added to the pipeline : user can call on these endpoints for further operation
 	*/
+
+	router.HandleFunc("/pipelines/{pipeline_id}/stages/add", handlers.AddStageHandler).Methods("POST")
 	router.HandleFunc("/pipelines/{pipeline_id}/start", handlers.ExecutePipelineHandler).Methods("POST")
-	// router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
+	router.HandleFunc("/pipelines/{pipeline_id}/delete", handlers.DeletePipelineHandler).Methods("POST")
 
 	/*--  Endpoint for WEB SOCKET --*/
 	// router.HandleFunc("/ws/status-updates", handlers.StatusUpdatesHandler)

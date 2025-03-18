@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"net"
-	stagepb "stageservice/proto"
-	"stageservice/services"
-	"stageservice/shared/db"
 
+	stagepb "github.com/ashwin-pf9/DMP2S/services/stageservice/proto"
+	"github.com/ashwin-pf9/DMP2S/services/stageservice/services"
+	"github.com/ashwin-pf9/shared/db"
 	"google.golang.org/grpc"
 )
 

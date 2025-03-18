@@ -33,7 +33,8 @@ const Login = () => {
       
       if (data.token) {
         localStorage.setItem("token", data.token);
-        localStorage.setItem("user_name", data.userName)
+        localStorage.setItem("user_name", data.user_name)
+        localStorage.setItem("user_id", data.user_id)
         console.log("Navigating to dashboard...");
         navigate("/dashboard"); // Ensure this runs only once
       }

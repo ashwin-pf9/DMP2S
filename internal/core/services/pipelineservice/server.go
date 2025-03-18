@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 	"net"
-	pipelinepb "pipelineservice/proto"
-	"pipelineservice/service"
-	"pipelineservice/shared/db"
-	"pipelineservice/stagepb"
 
+	pipelinepb "github.com/ashwin-pf9/DMP2S/services/pipelineservice/proto"
+	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/service"
+	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
+	"github.com/ashwin-pf9/shared/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

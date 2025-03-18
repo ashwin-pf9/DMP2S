@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"log"
-	"pipelineservice/events"
-	"pipelineservice/shared/domain"
-	"pipelineservice/stagepb"
+
 	"time"
 
+	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/events"
+	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
+	"github.com/ashwin-pf9/shared/domain"
 	"github.com/google/uuid"
 )
 
@@ -54,7 +55,6 @@ func (imp *PipelineOrchestratorImpl) Execute(ctx context.Context, input interfac
 		log.Printf("Executing stage: %s", stage.Name)
 		// Broadcast that the stage has started
 		events.SendUpdate(stage.ID.String(), "Running")
-
 
 		executionIDValue := ctx.Value("executionID")
 

@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	authpb "DMP2S/internal/protobuffs/auth"
 	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
+	authpb "github.com/ashwin-pf9/DMP2S/internal/protobuffs/auth"
 	"google.golang.org/grpc"
 )
 
@@ -104,7 +104,8 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	json.NewEncoder(w).Encode(map[string]string{
-		"token":    user.Token, // Ensure `user` has a valid Token field
-		"userName": user.UserName,
+		"token":     user.Token, // Ensure `user` has a valid Token field
+		"user_name": user.UserName,
+		"user_id":   user.UserId,
 	})
 }

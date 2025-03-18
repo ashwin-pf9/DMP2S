@@ -1,4 +1,4 @@
-module github.com/ashwin-pf9/DMP2S/services/pipelineservice
+module crudpipelineservice
 
 go 1.23.6
 
@@ -6,7 +6,6 @@ require (
 	github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee
 	github.com/google/uuid v1.6.0
 	google.golang.org/grpc v1.71.0
-	google.golang.org/protobuf v1.36.5
 )
 
 require (
@@ -23,6 +22,7 @@ require (
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250115164207-1a7da9e5054f // indirect
+	google.golang.org/protobuf v1.36.5 // indirect
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/gorm v1.25.12 // indirect
 )

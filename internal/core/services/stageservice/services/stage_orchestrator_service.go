@@ -3,12 +3,13 @@ package services
 import (
 	"context"
 	"log"
-	stagepb "stageservice/proto"
-	"stageservice/shared/db"
-	"stageservice/shared/domain"
-	"stageservice/shared/ports"
+
 	"time"
 
+	stagepb "github.com/ashwin-pf9/DMP2S/services/stageservice/proto"
+	"github.com/ashwin-pf9/shared/db"
+	"github.com/ashwin-pf9/shared/domain"
+	"github.com/ashwin-pf9/shared/ports"
 	"github.com/google/uuid"
 )
 
@@ -31,6 +32,8 @@ func (b *StageOrchestratorService) GetStageID() uuid.UUID {
 
 // Execute runs the build stage logic
 func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagepb.ExecuteStageRequest) (*stagepb.ExecuteStageResponse, error) {
+	DB := db.InitDatabase()
+
 	log.Printf("stage_orch_service - ExecuteStage called\n")
 	executionID, err := uuid.Parse(req.ExecutionId)
 	log.Printf("stage_orch_service - ExecutionID : %s\n", executionID)
@@ -71,7 +74,7 @@ func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagep
 		stageExecution.ErrorMessage = err.Error()
 		stageExecution.EndedAt = &endTime
 
-		db.DB.Save(&stageExecution)
+		DB.Save(&stageExecution)
 		return &stagepb.ExecuteStageResponse{
 			Result:       "",
 			ErrorMessage: "Failed to execute stage",
@@ -82,7 +85,7 @@ func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagep
 	endTime := time.Now()
 	stageExecution.EndedAt = &endTime
 
-	db.DB.Save(&stageExecution)
+	DB.Save(&stageExecution)
 
 	return &stagepb.ExecuteStageResponse{
 		Result:       "Build completed",

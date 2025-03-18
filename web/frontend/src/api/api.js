@@ -6,12 +6,18 @@ const getAuthToken = () => {
 
 export const fetchPipelines = async () => {
   try {
+  const userId = localStorage.getItem("user_id");
+  if (!userId) {
+    throw new Error("User ID not found in localStorage");
+  }
+  
     const response = await fetch(`${API_BASE_URL}/pipelines`, {
-      method: "GET",
+      method: "POST",
       headers: {
         "Authorization": `Bearer ${getAuthToken()}`,
         "Content-Type": "application/json"
-      }
+      },
+      body: JSON.stringify({ user_id:  userId}),
     });
 
     if (!response.ok) {

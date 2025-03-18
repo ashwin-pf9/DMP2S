@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package crudpipeline;
+
+option go_package = "./;crudpipelinepb";
+
+
+message Pipeline {
+    string id = 1;
+    string user_id = 2;
+    string name = 3;
+  }
+  
+  message Stage {
+    string id = 1;
+    string pipeline_id = 2;
+    string name = 3;
+  //   int32 order = 4;
+  //   string config = 5;
+  }
+
+
+// ----------- REQUESTS -----------
+
+message CreatePipelineRequest {
+  string user_id = 1;
+  string name = 2;
+}
+
+message GetUserPipelinesRequest {
+  string user_id = 1;
+}
+
+message GetPipelineStagesRequest {
+  string pipeline_id = 1;
+}
+
+
+// ----------- RESPONSES -----------
+
+message PipelineResponse {
+  Pipeline pipeline = 1;
+}
+
+message PipelinesResponse {
+  repeated Pipeline pipelines = 1;
+}
+
+message StagesResponse {
+  repeated Stage stages = 1;
+}
+
+
+
+// ----------- SERVICES -----------
+
+service PipelineService {
+  rpc CreatePipeline(CreatePipelineRequest) returns (PipelineResponse);
+  rpc GetUserPipelines(GetUserPipelinesRequest) returns (PipelinesResponse);
+  rpc GetPipelineStages(GetPipelineStagesRequest) returns (StagesResponse);
+}
+
+
+/* protoc --proto_path=internal/core/services/crudpipelineservice/proto \
+--go_out=internal/core/services/crudpipelineservice/proto \
+--go-grpc_out=internal/core/services/crudpipelineservice/proto \
+--go_opt=paths=source_relative \
+--go-grpc_opt=paths=source_relative \
+internal/core/services/crudpipelineservice/proto/crudpipeline.proto */
