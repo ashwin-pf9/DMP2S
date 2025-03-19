@@ -17,7 +17,7 @@ var natsConn *nats.Conn
 // Initialize NATS connection
 func InitNATS() {
 	var err error
-	natsConn, err = nats.Connect(nats.DefaultURL)
+	natsConn, err = nats.Connect("nats-server:4222")
 	if err != nil {
 		log.Fatalf("Failed to connect to NATS: %v", err)
 	}

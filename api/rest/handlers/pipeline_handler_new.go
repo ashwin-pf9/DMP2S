@@ -17,50 +17,8 @@ import (
 var pipelineClient pb.PipelineServiceClient
 var pipelineServer pb.PipelineOrchestratorServiceClient
 
-func InitPipelineClient() {
-	conn, err := grpc.Dial("pipelineservice-service:50053", grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("Failed to connect to gRPC server: %v", err)
-	}
-	pipelineClient = pb.NewPipelineServiceClient(conn)
-}
-
-// func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodPost {
-// 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	var req struct {
-// 		Name   string `json:"name"`
-// 		UserID string `json:"user_id"`
-// 	}
-// 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Second)
-// 	defer cancel()
-
-// 	InitPipelineClient()
-
-// 	resp, err := pipelineClient.CreatePipeline(ctx, &pb.CreatePipelineRequest{
-// 		Name:   req.Name,
-// 		UserId: req.UserID,
-// 	})
-// 	if err != nil {
-// 		error := fmt.Sprintf("Pipeline creation failed %v", err.Error())
-// 		http.Error(w, error, http.StatusInternalServerError)
-// 		return
-// 	}
-
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(resp)
-// }
-
 func InitPipelineServer() {
-	conn, err := grpc.Dial("localhost:50053", grpc.WithInsecure())
+	conn, err := grpc.Dial("pipelineservice-service:50053", grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("Failed to connect to gRPC server: %v", err)
 	}
@@ -88,7 +46,7 @@ func ExecutePipelineHandler(w http.ResponseWriter, r *http.Request) {
 		PipelineId: pipelineID.String(),
 	})
 	if err != nil {
-		error := fmt.Sprintf("Pipeline creation failed : %v", err.Error())
+		error := fmt.Sprintf("Pipeline execution failed : %v", err.Error())
 		http.Error(w, error, http.StatusInternalServerError)
 		return
 	}
@@ -177,3 +135,45 @@ func DeletePipelineHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Pipeline deleted successfully"})
 }
+
+// func InitPipelineClient() {
+// 	conn, err := grpc.Dial("pipelineservice-service:50053", grpc.WithInsecure())
+// 	if err != nil {
+// 		log.Fatalf("Failed to connect to gRPC server: %v", err)
+// 	}
+// 	pipelineClient = pb.NewPipelineServiceClient(conn)
+// }
+
+// func CreatePipelineHandler(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodPost {
+// 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	var req struct {
+// 		Name   string `json:"name"`
+// 		UserID string `json:"user_id"`
+// 	}
+// 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+// 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+// 		return
+// 	}
+
+// 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Second)
+// 	defer cancel()
+
+// 	InitPipelineClient()
+
+// 	resp, err := pipelineClient.CreatePipeline(ctx, &pb.CreatePipelineRequest{
+// 		Name:   req.Name,
+// 		UserId: req.UserID,
+// 	})
+// 	if err != nil {
+// 		error := fmt.Sprintf("Pipeline creation failed %v", err.Error())
+// 		http.Error(w, error, http.StatusInternalServerError)
+// 		return
+// 	}
+
+// 	w.WriteHeader(http.StatusCreated)
+// 	json.NewEncoder(w).Encode(resp)
+// }

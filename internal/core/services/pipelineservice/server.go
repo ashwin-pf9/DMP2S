@@ -4,21 +4,22 @@ import (
 	"log"
 	"net"
 
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/events"
-	pipelinepb "github.com/ashwin-pf9/DMP2S/services/pipelineservice/proto"
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/service"
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
+	"pipelineservice/events"
+	pipelinepb "pipelineservice/proto"
+	"pipelineservice/service"
+	"pipelineservice/stagepb"
+
 	"github.com/ashwin-pf9/shared/db"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
-	db.InitDatabase()
+	log.Printf("pipeline server started\n")
 	events.InitNATS() // For publishing
 
 	// Connect to StageService running at stage-service:50052
-	conn, err := grpc.Dial("localhost:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial("stageservice-service:50052", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to stage service: %v", err)
 	}
@@ -30,7 +31,7 @@ func main() {
 	orchestrator := service.NewPipelineOrchestratorImpl(stageClient)
 
 	// Create Pipeline Orchestrator Service
-	pipelineOrchestratorService := service.NewPipelineOrchestratorService(orchestrator, stageClient)
+	pipelineOrchestratorService := service.NewPipelineOrchestratorService(orchestrator, stageClient, db.InitDatabase())
 
 	// Create handler that implements pipelinepb.PipelineServiceServer
 	// pipelineHandler := handler.NewPipelineHandler(*pipelineOrchestratorService)

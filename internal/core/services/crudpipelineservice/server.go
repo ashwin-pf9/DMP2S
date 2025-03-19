@@ -6,11 +6,12 @@ import (
 	"log"
 	"net"
 
+	"github.com/ashwin-pf9/shared/db"
 	"google.golang.org/grpc"
 )
 
 func main() {
-	crudService := service.NewPipelineService()
+	crudService := service.NewPipelineService(db.InitDatabase())
 
 	authServer := service.NewPipelineServer(crudService)
 

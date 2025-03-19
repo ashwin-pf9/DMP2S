@@ -24,7 +24,7 @@ func main() {
 	// Create actual implementation of StageOrchestrator
 	stageImpl := services.NewStageOrchestratorImpl()
 
-	stageServer := services.NewStageOrchestratorService(&stageImpl)
+	stageServer := services.NewStageOrchestratorService(&stageImpl, db.InitDatabase())
 
 	// Register gRPC server with implementation
 	stagepb.RegisterStageServiceServer(grpcServer, stageServer)

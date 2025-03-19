@@ -7,13 +7,15 @@ import (
 
 	"time"
 
-	pipelinepb "github.com/ashwin-pf9/DMP2S/services/pipelineservice/proto"
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
-	"github.com/ashwin-pf9/shared/db"
+	pipelinepb "pipelineservice/proto"
+
+	"pipelineservice/stagepb"
+
 	"github.com/ashwin-pf9/shared/domain"
 	"github.com/ashwin-pf9/shared/ports"
 	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/emptypb"
+	"gorm.io/gorm"
 )
 
 /*
@@ -31,16 +33,18 @@ import (
 type PipelineOrchestratorService struct { /*contract instance*/
 	orchestrator                                              ports.PipelineOrchestratorInterface
 	stageClient                                               stagepb.StageServiceClient // gRPC client interface
-	pipelinepb.UnimplementedPipelineOrchestratorServiceServer                            // embed to satisfy interface
+	DB                                                        *gorm.DB
+	pipelinepb.UnimplementedPipelineOrchestratorServiceServer // embed to satisfy interface
 }
 
 // Actual contract instance creation
 // CREATE NEW APPLICATION
-func NewPipelineOrchestratorService(orchestrator ports.PipelineOrchestratorInterface, stageClient stagepb.StageServiceClient) *PipelineOrchestratorService {
+func NewPipelineOrchestratorService(orchestrator ports.PipelineOrchestratorInterface, stageClient stagepb.StageServiceClient, DB *gorm.DB) *PipelineOrchestratorService {
 	//RETURNING INSTANCE OF APPLICATION
 	return &PipelineOrchestratorService{
 		orchestrator: orchestrator,
 		stageClient:  stageClient,
+		DB:           DB,
 	}
 }
 
@@ -55,7 +59,7 @@ func NewPipelineOrchestratorService(orchestrator ports.PipelineOrchestratorInter
 // Inorder to access interface methods i need to create methods which will belong to struct PipelineOrchestratorService
 // AddStageToPipeline RPC
 func (s *PipelineOrchestratorService) AddStageToPipeline(ctx context.Context, req *pipelinepb.AddStageRequest) (*emptypb.Empty, error) {
-	DB := db.InitDatabase()
+	// DB := db.InitDatabase()
 	// Validate input
 	if req.GetStage().GetName() == "" {
 		return nil, errors.New("stage name cannot be empty")
@@ -63,7 +67,7 @@ func (s *PipelineOrchestratorService) AddStageToPipeline(ctx context.Context, re
 
 	// Check if pipeline exists
 	var pipeline domain.Pipeline
-	if err := DB.First(&pipeline, "id = ?", req.GetStage().GetPipelineId()).Error; err != nil {
+	if err := s.DB.First(&pipeline, "id = ?", req.GetStage().GetPipelineId()).Error; err != nil {
 		return nil, errors.New("pipeline not found")
 	}
 
@@ -82,7 +86,7 @@ func (s *PipelineOrchestratorService) AddStageToPipeline(ctx context.Context, re
 	}
 
 	// Save stage to DB
-	if err := DB.Create(&stage).Error; err != nil {
+	if err := s.DB.Create(&stage).Error; err != nil {
 		return nil, errors.New("failed to save stage to database")
 	}
 
@@ -91,7 +95,7 @@ func (s *PipelineOrchestratorService) AddStageToPipeline(ctx context.Context, re
 
 // ExecutePipeline(context.Context, *ExecutePipelineRequest) (*ExecutionResponse, error)
 func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, req *pipelinepb.ExecutePipelineRequest) (*pipelinepb.ExecutionResponse, error) {
-	DB := db.InitDatabase()
+	// DB := db.InitDatabase()
 	log.Printf("pipeline_orch_service - ExecutePipeline called")
 	pipelineID, err := uuid.Parse(req.GetPipelineId())
 	if err != nil {
@@ -108,19 +112,19 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, req *
 		Status:     string(domain.Running),
 		StartedAt:  startTime,
 	}
-	log.Printf("Execution of Pipeline started: %s", executionID)
+	log.Printf("Execution of Pipeline started New: %s", executionID)
 
 	// Save execution start to DB
-	if err := DB.Create(&execution).Error; err != nil {
+	if err := s.DB.Create(&execution).Error; err != nil {
 		return nil, errors.New("failed to start pipeline execution")
 	}
 
 	// Fetch stages
 	var domainStages []domain.Stage
-	if err := DB.Where("pipeline_id = ?", pipelineID).Find(&domainStages).Error; err != nil || len(domainStages) < 1 {
+	if err := s.DB.Where("pipeline_id = ?", pipelineID).Find(&domainStages).Error; err != nil || len(domainStages) < 1 {
 		// Mark execution as failed
 		execution.Status = string(domain.Failed)
-		DB.Save(&execution)
+		s.DB.Save(&execution)
 		return nil, errors.New("no stages found for pipeline")
 	}
 
@@ -131,14 +135,14 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, req *
 	_, err = s.orchestrator.Execute(ctx, domainStages)
 	if err != nil {
 		execution.Status = string(domain.Failed)
-		DB.Save(&execution)
+		s.DB.Save(&execution)
 		return nil, errors.New("pipeline execution failed")
 	}
 
 	// Mark as successful
 	execution.Status = string(domain.Success)
 	execution.EndedAt = time.Now()
-	DB.Save(&execution)
+	s.DB.Save(&execution)
 
 	log.Printf("Pipeline Execution completed: %s", executionID)
 
@@ -150,7 +154,7 @@ func (s *PipelineOrchestratorService) ExecutePipeline(ctx context.Context, req *
 
 // DeletePipeline(context.Context, *PipelineIDRequest) (*emptypb.Empty, error)
 func (s *PipelineOrchestratorService) DeletePipeline(ctx context.Context, req *pipelinepb.PipelineIDRequest) (*emptypb.Empty, error) {
-	DB := db.InitDatabase()
+	// DB := db.InitDatabase()
 	// Parse pipeline ID from request
 	pipelineID, err := uuid.Parse(req.GetPipelineId())
 	if err != nil {
@@ -159,7 +163,7 @@ func (s *PipelineOrchestratorService) DeletePipeline(ctx context.Context, req *p
 	}
 
 	// Delete pipeline
-	if err := DB.Where("id = ?", pipelineID).Delete(&domain.Pipeline{}).Error; err != nil {
+	if err := s.DB.Where("id = ?", pipelineID).Delete(&domain.Pipeline{}).Error; err != nil {
 		log.Println("Error deleting pipeline:", err)
 		return nil, errors.New("failed to delete pipeline")
 	}

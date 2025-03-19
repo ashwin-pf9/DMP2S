@@ -7,32 +7,34 @@ import (
 	"time"
 
 	stagepb "github.com/ashwin-pf9/DMP2S/services/stageservice/proto"
-	"github.com/ashwin-pf9/shared/db"
 	"github.com/ashwin-pf9/shared/domain"
 	"github.com/ashwin-pf9/shared/ports"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 // BuildStage implements Stage interface
 type StageOrchestratorService struct {
 	stagepb.UnimplementedStageServiceServer
 	stage ports.Stage
+	DB    *gorm.DB
 }
 
-func NewStageOrchestratorService(somename ports.Stage) *StageOrchestratorService {
+func NewStageOrchestratorService(somename ports.Stage, DB *gorm.DB) *StageOrchestratorService {
 	return &StageOrchestratorService{
 		stage: somename,
+		DB:    DB,
 	}
 }
 
 // GetID returns the stage ID
-func (b *StageOrchestratorService) GetStageID() uuid.UUID {
-	return b.stage.GetID()
+func (s *StageOrchestratorService) GetStageID() uuid.UUID {
+	return s.stage.GetID()
 }
 
 // Execute runs the build stage logic
 func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagepb.ExecuteStageRequest) (*stagepb.ExecuteStageResponse, error) {
-	DB := db.InitDatabase()
+	// DB := db.InitDatabase()
 
 	log.Printf("stage_orch_service - ExecuteStage called\n")
 	executionID, err := uuid.Parse(req.ExecutionId)
@@ -74,7 +76,7 @@ func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagep
 		stageExecution.ErrorMessage = err.Error()
 		stageExecution.EndedAt = &endTime
 
-		DB.Save(&stageExecution)
+		s.DB.Save(&stageExecution)
 		return &stagepb.ExecuteStageResponse{
 			Result:       "",
 			ErrorMessage: "Failed to execute stage",
@@ -85,7 +87,7 @@ func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagep
 	endTime := time.Now()
 	stageExecution.EndedAt = &endTime
 
-	DB.Save(&stageExecution)
+	s.DB.Save(&stageExecution)
 
 	return &stagepb.ExecuteStageResponse{
 		Result:       "Build completed",
@@ -94,13 +96,13 @@ func (s *StageOrchestratorService) ExecuteStage(ctx context.Context, req *stagep
 }
 
 // HandleError handles any errors during execution
-func (b *StageOrchestratorService) HandleError(ctx context.Context, err error) error {
-	b.stage.HandleError(ctx, err)
+func (s *StageOrchestratorService) HandleError(ctx context.Context, err error) error {
+	s.stage.HandleError(ctx, err)
 	return err
 }
 
 // Rollback rolls back the stage if it fails
-func (b *StageOrchestratorService) Rollback(ctx context.Context, input interface{}) error {
-	b.stage.Rollback(ctx, "some object")
+func (s *StageOrchestratorService) Rollback(ctx context.Context, input interface{}) error {
+	s.stage.Rollback(ctx, "some object")
 	return nil
 }

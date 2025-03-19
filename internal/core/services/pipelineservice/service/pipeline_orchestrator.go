@@ -7,8 +7,9 @@ import (
 
 	"time"
 
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/events"
-	"github.com/ashwin-pf9/DMP2S/services/pipelineservice/stagepb"
+	"pipelineservice/events"
+	"pipelineservice/stagepb"
+
 	"github.com/ashwin-pf9/shared/domain"
 	"github.com/google/uuid"
 )

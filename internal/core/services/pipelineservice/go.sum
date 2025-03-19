@@ -1,7 +1,13 @@
-github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee h1:P4utRXRaH0ubW43qYec0XP24H/iSmBAPTcCGhrZAtfg=
-github.com/ashwin-pf9/shared v0.0.0-20250317212347-fe661c62f5ee/go.mod h1:ZNt0YXO6h++EuHzZD4WXFGOPmtiIWUOfvLcXXCLb3bk=
 github.com/ashwin-pf9/shared v0.0.2 h1:DJMCNGLCy+J3AwfIc2BNWg+pOKVMDuAhJ6tyRQV3mBY=
 github.com/ashwin-pf9/shared v0.0.2/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
+github.com/ashwin-pf9/shared v0.0.3 h1:A4KescrQ24DOqU5+5vS2DvqW+1ACz015kKe73r2r6sU=
+github.com/ashwin-pf9/shared v0.0.3/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
+github.com/ashwin-pf9/shared v0.0.4 h1:r4lY+fydnxClkM2IlZIMseq+nkXCf0VH/lOd83IN7sQ=
+github.com/ashwin-pf9/shared v0.0.4/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
+github.com/ashwin-pf9/shared v0.0.5 h1:6CHk3X8Bcbfui3Hiw5TLtWoBcvH3/E9UIp171g6x0nM=
+github.com/ashwin-pf9/shared v0.0.5/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
+github.com/ashwin-pf9/shared v0.0.7 h1:LzVqn1mf0PosxACYN9XJwZqD5ZYuRRz7bcBACWabzPc=
+github.com/ashwin-pf9/shared v0.0.7/go.mod h1:P6zAdeu0hVJuCNEgDEFCWS7k+X4XHoNLEyx19mL7n5w=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -27,8 +33,6 @@ github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
 github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
-github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
-github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/klauspost/compress v1.17.9 h1:6KIumPrER1LHsvBVuDa0r5xaG0Es51mhhB9BQB2qeMA=
 github.com/klauspost/compress v1.17.9/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/nats-io/nats.go v1.39.1 h1:oTkfKBmz7W047vRxV762M67ZdXeOtUgvbBaNoQ+3PPk=
