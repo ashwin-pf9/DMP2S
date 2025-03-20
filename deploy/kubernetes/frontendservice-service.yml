@@ -7,7 +7,7 @@ spec:
     app: frontend
   ports:
     - protocol: TCP
-      port: 80    
-      targetPort: 80  # Changed from 8080 to 80 (matches NGINX)
-      nodePort: 30001
-  type: NodePort 
+      port: 80    # This is the Service Port (used inside the cluster)
+      targetPort: 80 # Port inside the container
+      nodePort: 30001 # Nodeport is for accessing this service from outside of the cluster
+  type: NodePort

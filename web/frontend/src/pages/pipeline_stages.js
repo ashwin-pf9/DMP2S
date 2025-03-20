@@ -34,7 +34,7 @@ const PipelineStages = () => {
 
   useEffect(() => {
     // Establish WebSocket connection
-    const socket = new WebSocket("ws://localhost:30080/ws/status-updates");
+    const socket = new WebSocket("ws://localhost:30001/ws/status-updates");
 
     socket.onmessage = (event) => {
       const update = JSON.parse(event.data);
