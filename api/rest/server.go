@@ -54,7 +54,7 @@ func StartRESTServer() error {
 
 	// Enable CORS using `rs/cors` package
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow frontend
+		AllowedOrigins:   []string{"http://localhost:30001", "http://localhost:3000"}, // Allow frontend
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type", "Authorization"},
 		AllowCredentials: true,
