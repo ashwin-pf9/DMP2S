@@ -103,8 +103,13 @@ func GetPipelinesHandler(w http.ResponseWriter, r *http.Request) { //Working
 		return
 	}
 
+	pipelines := resp.Pipelines
+	if pipelines == nil {
+		pipelines = []*crudpipelinepb.Pipeline{}
+	}
+
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(resp.Pipelines); err != nil {
+	if err := json.NewEncoder(w).Encode(pipelines); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
 }
