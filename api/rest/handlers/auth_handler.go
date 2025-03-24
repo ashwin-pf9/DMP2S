@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	authpb "github.com/ashwin-pf9/DMP2S/api/rest/protobuffs/auth"
@@ -62,7 +63,15 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 		RoleId:   int32(creds.RoleID),
 	})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// Check for specific known error from Supabase or your auth service
+		if strings.Contains(err.Error(), "Password should be at least") {
+			http.Error(w, err.Error(), http.StatusBadRequest) // 400 for client error
+			return
+		}
+
+		// Log and return 500 for unexpected errors
+		log.Printf("Registration error: %v\n", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -71,6 +80,23 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
 	}
+
+	// user, err := authClient.Register(ctx, &authpb.RegisterRequest{
+	// 	Email:    creds.Email,
+	// 	Password: creds.Password,
+	// 	Name:     creds.Name,
+	// 	RoleId:   int32(creds.RoleID),
+	// })
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// // Sending response back to the client
+	// w.WriteHeader(http.StatusCreated)
+	// if err := json.NewEncoder(w).Encode(user); err != nil {
+	// 	http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	// }
 }
 
 // LoginHandler processes user logins

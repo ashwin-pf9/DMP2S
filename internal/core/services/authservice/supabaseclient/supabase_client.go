@@ -2,9 +2,9 @@
 package supabaseclient
 
 import (
-	"log"
+	// "log"
 
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 
 	"os"
 
@@ -12,10 +12,10 @@ import (
 )
 
 func InitSupabaseClient() *supabase.Client {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatalf("Error loading .env file: %v", err)
+	// }
 
 	url := os.Getenv("SUPABASE_URL")
 	key := os.Getenv("ANON_KEY")

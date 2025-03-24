@@ -1,0 +1,30 @@
+#--  MAKEFILE for DIRECT DEPLOYMENT (Recommended)  --#
+
+# Deploy all Kubernetes resources
+run:
+	@echo "Applying Kubernetes manifests..."
+	kubectl apply -f deploy/kubernetes/secret.yml
+	
+	kubectl apply -f deploy/kubernetes/nats-deployment.yml
+	kubectl apply -f deploy/kubernetes/nats-service.yml
+
+	kubectl apply -f deploy/kubernetes/authservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/authservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/restservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/restservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/crudservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/crudservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/stageservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/stageservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/pipelineservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/pipelineservice-service.yml
+	
+	kubectl apply -f deploy/kubernetes/frontendservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/frontendservice-service.yml
+
+# Combined target: run
+all: run

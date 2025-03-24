@@ -20,6 +20,8 @@ const Register = () => {
 
       if (!response.ok) throw new Error("Registration failed");
 
+      alert("Registration successful! Please confirm your email address to activate your account.");
+
       navigate("/login"); // Redirect to login after successful registration
     } catch (error) {
       console.error("Registration error:", error);

@@ -1,0 +1,94 @@
+#--  MAKEFILE for LOCAL BUILD  --#
+
+# Define Docker image tags
+VERSION = v1
+DOCKER_USER = ashwin0711
+
+# Services and paths
+SERVICES = restservice frontendservice authservice crudservice pipelineservice stageservice
+DOCKERFILES = \
+	deploy/docker/Dockerfile.rest \
+	deploy/docker/Dockerfile.auth \
+	deploy/docker/Dockerfile.crud \
+	deploy/docker/Dockerfile.ppln \
+	deploy/docker/Dockerfile.stage \
+	deploy/docker/Dockerfile.frontend
+
+# Build all Docker images
+build:
+	@echo "Building Docker images..."
+	docker build -f deploy/docker/Dockerfile.rest -t $(DOCKER_USER)/restservice:$(VERSION) .
+	docker build -f deploy/docker/Dockerfile.auth -t $(DOCKER_USER)/authservice:$(VERSION) .
+	docker build -f deploy/docker/Dockerfile.crud -t $(DOCKER_USER)/crudservice:$(VERSION) .
+	docker build -f deploy/docker/Dockerfile.ppln -t $(DOCKER_USER)/pipelineservice:$(VERSION) .
+	docker build -f deploy/docker/Dockerfile.stage -t $(DOCKER_USER)/stageservice:$(VERSION) .
+	docker build -f deploy/docker/Dockerfile.frontend -t $(DOCKER_USER)/frontendservice:$(VERSION) .
+
+# Push all Docker images to Docker Hub
+push:
+	@echo "Pushing Docker images..."
+	docker push $(DOCKER_USER)/restservice:$(VERSION)
+	docker push $(DOCKER_USER)/authservice:$(VERSION)
+	docker push $(DOCKER_USER)/crudservice:$(VERSION)
+	docker push $(DOCKER_USER)/pipelineservice:$(VERSION)
+	docker push $(DOCKER_USER)/stageservice:$(VERSION)
+	docker push $(DOCKER_USER)/frontendservice:$(VERSION)
+
+# Deploy all Kubernetes resources
+deploy:
+	@echo "Applying Kubernetes manifests..."
+	kubectl apply -f deploy/kubernetes/nats-deployment.yml
+	kubectl apply -f deploy/kubernetes/nats-service.yml
+
+	kubectl apply -f deploy/kubernetes/authservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/authservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/restservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/restservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/crudservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/crudservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/stageservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/stageservice-service.yml
+
+	kubectl apply -f deploy/kubernetes/pipelineservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/pipelineservice-service.yml
+	
+	kubectl apply -f deploy/kubernetes/frontendservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/frontendservice-service.yml
+
+# Combined target: build, push, deploy
+all: build push deploy
+
+# Clean up Docker images (optional)
+clean:
+	@echo "Removing Deployments, Services, & Docker images..."
+	kubectl delete deployment nats-deployment
+	kubectl delete service nats-server
+
+	kubectl delete deployment authservice
+	kubectl delete service authservice-service
+	
+	kubectl delete deployment crudservice
+	kubectl delete service crudservice-service
+	
+	kubectl delete deployment frontend
+	kubectl delete service frontend-service
+
+	kubectl delete deployment restservice
+	kubectl delete service restservice-service
+
+	kubectl delete deployment stageservice
+	kubectl delete service stageservice-service
+
+	kubectl delete deployment pipelineservice
+	kubectl delete service pipelineservice-service
+
+
+	docker rmi $(DOCKER_USER)/restservice:$(VERSION)
+	docker rmi $(DOCKER_USER)/frontendservice:$(VERSION)
+	docker rmi $(DOCKER_USER)/authservice:$(VERSION)
+	docker rmi $(DOCKER_USER)/crudservice:$(VERSION)
+	docker rmi $(DOCKER_USER)/pipelineservice:$(VERSION)
+	docker rmi $(DOCKER_USER)/stageservice:$(VERSION)
