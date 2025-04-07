@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grpcserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grpcserver
+  template:
+    metadata:
+      labels:
+        app: grpcserver
+    spec:
+      containers:
+      - name: grpcserver
+        image: ashwin0711/grpcserver:v1
+        ports:
+        - containerPort: 60000
+        env:
+        - name: NATS_URL
+          value: "nats://nats-service:4222"  # <-- NATS K8s Service

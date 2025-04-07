@@ -1,0 +1,106 @@
+syntax = "proto3";
+
+package pipeline;
+
+option go_package = "./;pipelinepb";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// ----------- MESSAGES -----------
+
+message Pipeline {
+  string id = 1;
+  string user_id = 2;
+  string name = 3;
+}
+
+message Stage {
+  string id = 1;
+  string pipeline_id = 2;
+  string name = 3;
+//   int32 order = 4;
+//   string config = 5;
+}
+
+message PipelineExecution {
+  string id = 1;
+  string pipeline_id = 2;
+  string status = 3;
+  google.protobuf.Timestamp started_at = 4;
+  google.protobuf.Timestamp ended_at = 5;
+}
+
+// ----------- REQUESTS -----------
+
+// message CreatePipelineRequest {
+//   string user_id = 1;
+//   string name = 2;
+// }
+
+// message GetUserPipelinesRequest {
+//   string user_id = 1;
+// }
+
+// message GetPipelineStagesRequest {
+//   string pipeline_id = 1;
+// }
+
+message AddStageRequest {
+  Stage stage = 1;
+}
+
+message ExecutePipelineRequest {
+  string pipeline_id = 1;
+}
+
+message PipelineIDRequest {
+  string pipeline_id = 1;
+}
+
+// ----------- RESPONSES -----------
+
+// message PipelineResponse {
+//   Pipeline pipeline = 1;
+// }
+
+// message PipelinesResponse {
+//   repeated Pipeline pipelines = 1;
+// }
+
+// message StagesResponse {
+//   repeated Stage stages = 1;
+// }
+
+message ExecutionResponse {
+  string execution_id = 1;
+}
+
+message StatusResponse {
+  string status = 1;
+}
+
+// ----------- SERVICES -----------
+
+// service PipelineService {
+//   rpc CreatePipeline(CreatePipelineRequest) returns (PipelineResponse);
+//   rpc GetUserPipelines(GetUserPipelinesRequest) returns (PipelinesResponse);
+//   rpc GetPipelineStages(GetPipelineStagesRequest) returns (StagesResponse);
+// }
+
+service PipelineOrchestratorService {
+  rpc ExecutePipeline(ExecutePipelineRequest) returns (ExecutionResponse);
+  rpc GetPipelineStatus(PipelineIDRequest) returns (StatusResponse);
+  rpc CancelPipeline(PipelineIDRequest) returns (google.protobuf.Empty);
+  rpc AddStageToPipeline(AddStageRequest) returns (google.protobuf.Empty);
+  rpc DeletePipeline(PipelineIDRequest) returns (google.protobuf.Empty);
+}
+
+/*
+protoc --proto_path=api/grpc/orchestrator/proto \
+--go_out=api/grpc/orchestrator/proto \
+--go-grpc_out=api/grpc/orchestrator/proto \
+--go_opt=paths=source_relative \
+--go-grpc_opt=paths=source_relative \
+api/grpc/orchestrator/proto/orch.proto
+*/

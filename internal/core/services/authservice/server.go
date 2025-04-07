@@ -7,6 +7,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
@@ -27,6 +28,9 @@ func main() {
 
 	// Register the AuthServer with the gRPC server
 	authpb.RegisterAuthServiceServer(grpcServer, authServer)
+
+	/*-- Enable Reflection --*/
+	reflection.Register(grpcServer)
 
 	log.Println("gRPC server running on port 50051...")
 	if err := grpcServer.Serve(lis); err != nil {

@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package crudpipeline;
+
+option go_package = "./;grpccrudpb";
+
+service PipelineService {
+    rpc CreatePipeline(CreatePipelineRequest) returns (CreatePipelineResponse);
+    rpc GetUserPipelines(GetPipelinesRequest) returns (GetPipelinesResponse);
+    rpc GetPipelineStages(GetPipelineStagesRequest) returns (GetPipelineStagesResponse);
+}
+
+// service PipelineService {
+//     rpc CreatePipeline(CreatePipelineRequest) returns (CreatePipelineResponse);
+//     rpc GetUserPipelines(GetPipelinesRequest) returns (GetPipelinesResponse);
+//     rpc GetPipelineStages(GetPipelineStagesRequest) returns (GetPipelineStagesResponse);
+//   }
+
+message Pipeline {
+    string id = 1;
+    string user_id = 2;
+    string name = 3;
+}
+
+message Stage {
+    string id = 1;
+    string pipeline_id = 2;
+    string name = 3;
+}
+
+
+message GetPipelinesRequest {
+    string user_id = 1;
+}
+
+message GetPipelinesResponse {
+    repeated Pipeline pipelines = 1;  
+}
+
+
+message CreatePipelineRequest {
+    string user_id = 1;
+    string name = 2;
+}
+
+message CreatePipelineResponse {
+    Pipeline pipeline = 1;
+}
+
+
+message GetPipelineStagesRequest {
+    string pipeline_id = 1;
+}
+
+message GetPipelineStagesResponse {
+    repeated Stage stages = 1;  
+}
+
+/*
+protoc --proto_path=api/grpc/crud/proto \
+--go_out=api/grpc/crud/proto \
+--go-grpc_out=api/grpc/crud/proto \
+--go_opt=paths=source_relative \
+--go-grpc_opt=paths=source_relative \
+api/grpc/crud/proto/crud.proto
+*/

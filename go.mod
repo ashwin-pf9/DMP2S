@@ -3,24 +3,15 @@ module github.com/ashwin-pf9/DMP2S
 go 1.23.6
 
 require (
-	github.com/google/uuid v1.6.0
-	github.com/gorilla/mux v1.8.1
-	github.com/gorilla/websocket v1.5.3
-	github.com/joho/godotenv v1.5.1
-	github.com/nats-io/nats.go v1.39.1
-	github.com/nedpals/supabase-go v0.5.0
-	github.com/rs/cors v1.11.1
+	github.com/spf13/cobra v1.9.1
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.5
 )
 
 require (
-	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
-	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
-	github.com/nats-io/nkeys v0.4.9 // indirect
-	github.com/nats-io/nuid v1.0.1 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
+	github.com/ashwin-pf9/shared v0.0.9 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/spf13/pflag v1.0.6 // indirect
 	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/text v0.21.0 // indirect

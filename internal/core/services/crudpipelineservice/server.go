@@ -8,12 +8,13 @@ import (
 
 	"github.com/ashwin-pf9/shared/db"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
 	crudService := service.NewPipelineService(db.InitDatabase())
 
-	authServer := service.NewPipelineServer(crudService)
+	crudServer := service.NewPipelineServer(crudService)
 
 	lis, err := net.Listen("tcp", ":50054")
 	if err != nil {
@@ -21,8 +22,10 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
+	// Enable reflection
+	reflection.Register(grpcServer)
 
-	crudpipelinepb.RegisterPipelineServiceServer(grpcServer, authServer)
+	crudpipelinepb.RegisterPipelineServiceServer(grpcServer, crudServer)
 
 	log.Println("gRPC server running on port 50054...")
 	if err := grpcServer.Serve(lis); err != nil {

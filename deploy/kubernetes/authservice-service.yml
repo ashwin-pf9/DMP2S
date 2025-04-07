@@ -9,4 +9,5 @@ spec:
     - protocol: TCP
       port: 50051
       targetPort: 50051
-  # type: ClusterIP  # Change to LoadBalancer if you need external access
+  #     nodePort: 30551
+  # type: NodePort  # Change to LoadBalancer if you need external access
