@@ -1,23 +1,23 @@
 package service
 
 import (
-	"DMP2S/cmd/utils"
 	"context"
 	"fmt"
 	"log"
 
+	"DMP2S/cmd/utils"
+	grpcauthpb "DMP2S/global-protos/auth"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-
-	"github.com/ashwin-pf9/DMP2S/global-protos"
 )
 
 // Global variable to hold the gRPC client
 var authClient grpcauthpb.AuthServiceClient
 
 // initGRPCClient initializes the connection to the gRPC server
-func InitGRPCClient() {
-	conn, err := grpc.NewClient("localhost:30080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+func InitAuthClient(url string) {
+	conn, err := grpc.NewClient(url, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to server: %v", err)
 	}

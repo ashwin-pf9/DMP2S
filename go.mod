@@ -1,4 +1,4 @@
-module github.com/ashwin-pf9/DMP2S
+module DMP2S
 
 go 1.23.6
 
@@ -9,7 +9,6 @@ require (
 )
 
 require (
-	github.com/ashwin-pf9/shared v0.0.9 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	golang.org/x/net v0.34.0 // indirect
