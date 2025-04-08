@@ -14,6 +14,9 @@ run:
 	kubectl apply -f deploy/kubernetes/restservice-deployment.yml
 	kubectl apply -f deploy/kubernetes/restservice-service.yml
 
+	kubectl apply -f deploy/kubernetes/grpcservice-deployment.yml
+	kubectl apply -f deploy/kubernetes/grpcservice-service.yml
+
 	kubectl apply -f deploy/kubernetes/crudservice-deployment.yml
 	kubectl apply -f deploy/kubernetes/crudservice-service.yml
 
