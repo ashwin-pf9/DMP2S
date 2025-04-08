@@ -21,35 +21,35 @@ spec:
         - name: SUPABASE_URL
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: SUPABASE_URL
         - name: ANON_KEY
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: ANON_KEY
         - name: HOST
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: HOST
         - name: PORT
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: PORT
         - name: DB_DATABASE
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: DB_DATABASE
         - name: DB_USER
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: DB_USER
         - name: DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: authservice-secret
+              name: supabase-secret
               key: DATABASE_PASSWORD
